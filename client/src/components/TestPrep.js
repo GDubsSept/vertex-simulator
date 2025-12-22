@@ -405,9 +405,7 @@ const TestScreen = ({
       onAnswer(answerValue, confidence);
     }
     if (isLast) {
-      if (allAnswered || (answerValue && answers.filter(a => a !== null).length === totalQuestions - 1)) {
-        onSubmit();
-      }
+      onSubmit();
     } else {
       onNext();
     }
