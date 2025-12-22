@@ -264,9 +264,9 @@ const SimulationInterface = ({ role, difficulty, onComplete, onExit }) => {
       </header>
 
       {/* Main Content - Three Panel Layout */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
         {/* Left Panel - Scenario Context */}
-        <aside className="w-80 flex-none border-r border-neutral-800 bg-neutral-900/30 overflow-y-auto">
+        <aside className="w-full lg:w-96 flex-none border-b lg:border-b-0 lg:border-r border-neutral-800 bg-neutral-900/30 overflow-y-auto max-h-64 lg:max-h-none">
           <div className="p-4">
             <h2 className="text-xs font-mono text-neutral-500 uppercase tracking-wider mb-4">
               Scenario Context
@@ -341,7 +341,7 @@ const SimulationInterface = ({ role, difficulty, onComplete, onExit }) => {
         </aside>
 
         {/* Center Panel - Chat/Action */}
-        <main className="flex-1 flex flex-col min-w-0 bg-neutral-950">
+        <main className="flex-1 flex flex-col min-w-0 bg-neutral-950 order-first lg:order-none">
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-6">
             <div className="max-w-3xl mx-auto space-y-4">
@@ -404,7 +404,7 @@ const SimulationInterface = ({ role, difficulty, onComplete, onExit }) => {
         </main>
 
         {/* Right Panel - Live Data */}
-        <aside className="w-80 flex-none border-l border-neutral-800 bg-neutral-900/30 overflow-y-auto">
+        <aside className="hidden lg:block w-96 flex-none border-l border-neutral-800 bg-neutral-900/30 overflow-y-auto">
           <DataPanel role={role} scenario={scenario} />
         </aside>
       </div>
