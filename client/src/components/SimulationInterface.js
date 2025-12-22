@@ -414,10 +414,25 @@ const SimulationInterface = ({ role, difficulty, onComplete, onExit }) => {
           </div>
         </main>
 
-        {/* Right Panel - Live Data */}
-        <aside className={`${showMobileData ? 'block' : 'hidden'} lg:block w-full lg:w-96 flex-none border-t lg:border-t-0 lg:border-l border-neutral-800 bg-neutral-900/30 overflow-y-auto max-h-72 lg:max-h-none`}>
+        {/* Right Panel - Live Data (Desktop) */}
+        <aside className="hidden lg:block w-96 flex-none border-l border-neutral-800 bg-neutral-900/30 overflow-y-auto">
           <DataPanel role={role} scenario={scenario} />
         </aside>
+
+        {/* Mobile Data Panel Overlay */}
+        {showMobileData && (
+          <div className="lg:hidden fixed inset-0 top-14 z-50 bg-neutral-950/95 overflow-y-auto">
+            <div className="p-2">
+              <button
+                onClick={() => setShowMobileData(false)}
+                className="mb-2 w-full py-2 bg-neutral-800 text-neutral-300 rounded-lg text-sm"
+              >
+                Close Data Panel
+              </button>
+            </div>
+            <DataPanel role={role} scenario={scenario} />
+          </div>
+        )}
       </div>
     </div>
   );
