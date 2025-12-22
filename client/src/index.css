@@ -40,13 +40,13 @@ body {
 /* Terminal-style text effect */
 .terminal-text {
   @apply font-mono;
-  text-shadow: 0 0 10px rgba(51, 119, 255, 0.5);
+  text-shadow: 0 0 10px rgba(82, 36, 127, 0.5);
 }
 
 /* Glowing border effect */
 .glow-border {
-  box-shadow: 0 0 0 1px rgba(51, 119, 255, 0.3),
-              0 0 20px rgba(51, 119, 255, 0.1);
+  box-shadow: 0 0 0 1px rgba(82, 36, 127, 0.3),
+              0 0 20px rgba(82, 36, 127, 0.1);
 }
 
 /* Pulsing alert indicator */
@@ -81,8 +81,8 @@ body {
 /* Grid background pattern */
 .grid-bg {
   background-image: 
-    linear-gradient(to right, rgba(51, 119, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(51, 119, 255, 0.03) 1px, transparent 1px);
+    linear-gradient(to right, rgba(82, 36, 127, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(82, 36, 127, 0.05) 1px, transparent 1px);
   background-size: 32px 32px;
 }
 

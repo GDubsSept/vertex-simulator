@@ -6,8 +6,7 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  ResponsiveContainer,
-  Cell
+  ResponsiveContainer
 } from 'recharts';
 import {
   Package,
@@ -16,8 +15,10 @@ import {
   AlertCircle,
   Plane,
   MapPin,
-  RefreshCw
+  RefreshCw,
+  Map
 } from 'lucide-react';
+import FlightMap from './FlightMap';
 
 const DataPanel = ({ role, scenario }) => {
   const [flightData, setFlightData] = useState(null);
@@ -51,6 +52,7 @@ const DataPanel = ({ role, scenario }) => {
 
   const tabs = [
     { id: 'overview', label: 'Overview' },
+    { id: 'map', label: 'Map' },
     { id: 'inventory', label: 'Inventory' },
     { id: 'flights', label: 'Flights' }
   ];
@@ -182,6 +184,12 @@ const DataPanel = ({ role, scenario }) => {
                 ))}
               </div>
             </div>
+          </div>
+        )}
+
+        {activeTab === 'map' && (
+          <div className="h-64">
+            <FlightMap flightData={flightData} />
           </div>
         )}
 

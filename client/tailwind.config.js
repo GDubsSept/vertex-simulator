@@ -6,19 +6,19 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Vertex brand - deep pharma blue
+        // Vertex brand purple
         vertex: {
-          50: '#eef5ff',
-          100: '#d9e8ff',
-          200: '#bcd7ff',
-          300: '#8ec0ff',
-          400: '#599dff',
-          500: '#3377ff',
-          600: '#1a55f5',
-          700: '#1340e1',
-          800: '#1635b6',
-          900: '#18318f',
-          950: '#141f57',
+          50: '#f5f0f9',
+          100: '#ebe0f3',
+          200: '#d4bfe6',
+          300: '#b794d4',
+          400: '#9a69c2',
+          500: '#7a42a8',
+          600: '#52247F',
+          700: '#451d6b',
+          800: '#381757',
+          900: '#2b1143',
+          950: '#1a0a29',
         },
         
         // Neutral - Slate for UI elements (dark mode focus)
@@ -107,8 +107,8 @@ module.exports = {
           '100%': { opacity: '1' },
         },
         'glow': {
-          '0%': { boxShadow: '0 0 5px rgba(51, 119, 255, 0.5)' },
-          '100%': { boxShadow: '0 0 20px rgba(51, 119, 255, 0.8)' },
+          '0%': { boxShadow: '0 0 5px rgba(82, 36, 127, 0.5)' },
+          '100%': { boxShadow: '0 0 20px rgba(82, 36, 127, 0.8)' },
         },
       },
       
