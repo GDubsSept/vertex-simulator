@@ -590,6 +590,285 @@ Provide your assessment as JSON:
   }
 });
 
+// ============================================================
+// TEST PREP ENDPOINTS
+// ============================================================
+
+// Load flashcards
+const flashcardsData = require('./data/flashcards.json');
+
+// Get all flashcards (for reference)
+app.get('/api/flashcards', (req, res) => {
+  res.json({ success: true, data: flashcardsData.flashcards });
+});
+
+// Get categories
+app.get('/api/flashcards/categories', (req, res) => {
+  const categories = [...new Set(flashcardsData.flashcards.map(f => f.category))];
+  res.json({ success: true, categories });
+});
+
+// Generate a test
+app.post('/api/test/generate', async (req, res) => {
+  try {
+    const { length, categories, weakAreas, difficulty } = req.body;
+    
+    // Filter flashcards by category if specified
+    let availableCards = flashcardsData.flashcards;
+    if (categories && categories.length > 0) {
+      availableCards = availableCards.filter(c => categories.includes(c.category));
+    }
+    
+    // Prioritize weak areas if specified
+    if (weakAreas && weakAreas.length > 0) {
+      const weakCards = availableCards.filter(c => weakAreas.includes(c.category));
+      const otherCards = availableCards.filter(c => !weakAreas.includes(c.category));
+      // 70% weak area questions, 30% other
+      const weakCount = Math.floor(length * 0.7);
+      const otherCount = length - weakCount;
+      availableCards = [
+        ...shuffleArray(weakCards).slice(0, weakCount),
+        ...shuffleArray(otherCards).slice(0, otherCount)
+      ];
+    }
+    
+    // Shuffle and select cards
+    const selectedCards = shuffleArray(availableCards).slice(0, Math.min(length, availableCards.length));
+    
+    // Generate questions using AI
+    const questionsPrompt = `You are a test generator for a Vertex Pharmaceuticals supply chain interview preparation tool.
+
+Based on these flashcards, generate ${length} test questions. Mix question types:
+- 60% multiple choice (4 options, one correct)
+- 40% free text (short answer)
+
+For each question, also generate:
+- A difficulty level (easy, medium, hard)
+- An "interview_style" boolean - true if it's a behavioral/situational question
+
+FLASHCARD DATA:
+${JSON.stringify(selectedCards, null, 2)}
+
+IMPORTANT GUIDELINES:
+1. Don't just copy flashcard fronts as questions - rephrase and add context
+2. Add 2-3 questions that combine multiple concepts or require deeper thinking
+3. Add 1-2 "interview-style" questions like "How would you explain X to a non-technical stakeholder?"
+4. Make multiple choice distractors plausible but clearly wrong to experts
+5. Vary difficulty: 30% easy, 50% medium, 20% hard
+
+Return ONLY valid JSON array:
+[
+  {
+    "id": 1,
+    "type": "multiple_choice",
+    "category": "category name",
+    "difficulty": "easy|medium|hard",
+    "interview_style": false,
+    "question": "Question text?",
+    "options": ["A) ...", "B) ...", "C) ...", "D) ..."],
+    "correct_answer": "A",
+    "explanation": "Why this is correct...",
+    "source_flashcard_id": 1
+  },
+  {
+    "id": 2,
+    "type": "free_text",
+    "category": "category name",
+    "difficulty": "medium",
+    "interview_style": true,
+    "question": "Question text?",
+    "ideal_answer": "Key points that should be covered...",
+    "explanation": "Detailed explanation...",
+    "source_flashcard_id": 2
+  }
+]`;
+
+    const response = await anthropic.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 8000,
+      messages: [{ role: 'user', content: questionsPrompt }]
+    });
+
+    const textContent = response.content.find(block => block.type === 'text');
+    let questions;
+    
+    try {
+      const jsonMatch = textContent.text.match(/\[[\s\S]*\]/);
+      if (jsonMatch) {
+        questions = JSON.parse(jsonMatch[0]);
+      } else {
+        throw new Error('No JSON array found');
+      }
+    } catch (e) {
+      console.error('Failed to parse questions:', e);
+      return res.status(500).json({ success: false, error: 'Failed to generate questions' });
+    }
+
+    res.json({ success: true, questions });
+
+  } catch (error) {
+    console.error('Test generation error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Grade test answers
+app.post('/api/test/grade', async (req, res) => {
+  try {
+    const { questions, answers } = req.body;
+    
+    const gradingPrompt = `You are a strict but fair grader for a Vertex Pharmaceuticals interview preparation test.
+
+Grade each answer. Be realistic - don't give full credit for partial answers.
+
+QUESTIONS AND ANSWERS:
+${questions.map((q, i) => `
+Question ${i + 1} (${q.type}, ${q.difficulty}, Category: ${q.category}):
+${q.question}
+${q.type === 'multiple_choice' ? `Options: ${q.options.join(', ')}\nCorrect Answer: ${q.correct_answer}` : `Ideal Answer: ${q.ideal_answer}`}
+
+User's Answer: ${answers[i]?.answer || 'NO ANSWER'}
+Time Taken: ${answers[i]?.timeTaken || 0} seconds
+Confidence: ${answers[i]?.confidence || 'not rated'}/5
+`).join('\n---\n')}
+
+For each answer, provide:
+1. Score (0-100)
+2. Is correct (boolean)
+3. Specific feedback
+4. What was missed (if anything)
+
+Also provide:
+- Overall score (weighted by difficulty: easy=1x, medium=1.5x, hard=2x)
+- Category scores (average per category)
+- Weak areas (categories below 70%)
+- Study recommendations
+
+GRADING STANDARDS:
+- Multiple choice: 100 if correct, 0 if wrong
+- Free text: Grade on completeness, accuracy, use of correct terminology
+  - 90-100: Complete, accurate, uses proper terms
+  - 70-89: Mostly correct, missing minor details
+  - 50-69: Partially correct, missing key concepts
+  - Below 50: Incorrect or too vague
+
+Return ONLY valid JSON:
+{
+  "overall_score": 85,
+  "overall_grade": "B+",
+  "total_correct": 15,
+  "total_questions": 20,
+  "time_analysis": {
+    "average_seconds": 45,
+    "rushed_answers": 2,
+    "hesitant_answers": 3
+  },
+  "category_scores": {
+    "Category Name": { "score": 85, "correct": 5, "total": 6 }
+  },
+  "weak_areas": ["Category 1", "Category 2"],
+  "strong_areas": ["Category 3"],
+  "answers": [
+    {
+      "question_id": 1,
+      "score": 100,
+      "is_correct": true,
+      "feedback": "Correct!",
+      "missed": null
+    }
+  ],
+  "study_recommendations": [
+    "Focus on X because...",
+    "Review the concept of Y..."
+  ],
+  "interview_readiness": {
+    "score": 75,
+    "feedback": "You show good knowledge but need to work on..."
+  }
+}`;
+
+    const response = await anthropic.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 4000,
+      messages: [{ role: 'user', content: gradingPrompt }]
+    });
+
+    const textContent = response.content.find(block => block.type === 'text');
+    let gradeData;
+    
+    try {
+      const jsonMatch = textContent.text.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        gradeData = JSON.parse(jsonMatch[0]);
+      } else {
+        throw new Error('No JSON found');
+      }
+    } catch (e) {
+      console.error('Failed to parse grade:', e);
+      return res.status(500).json({ success: false, error: 'Failed to grade test' });
+    }
+
+    res.json({ success: true, grade: gradeData });
+
+  } catch (error) {
+    console.error('Grading error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Teach a concept
+app.post('/api/test/teach', async (req, res) => {
+  try {
+    const { category, concepts } = req.body;
+    
+    // Get relevant flashcards
+    const relevantCards = flashcardsData.flashcards.filter(f => 
+      f.category === category || concepts.some(c => f.front.toLowerCase().includes(c.toLowerCase()))
+    );
+
+    const teachPrompt = `You are a helpful tutor preparing someone for a Vertex Pharmaceuticals supply chain interview.
+
+The user is weak in: ${category}
+Specific concepts they struggled with: ${concepts.join(', ')}
+
+Relevant knowledge base:
+${JSON.stringify(relevantCards, null, 2)}
+
+Provide a clear, concise teaching session that:
+1. Explains the core concepts in simple terms
+2. Uses analogies where helpful
+3. Connects concepts to real Vertex business context
+4. Provides memory tricks or frameworks
+5. Ends with 2-3 quick self-check questions
+
+Keep it conversational and encouraging. Format with markdown.`;
+
+    const response = await anthropic.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 2000,
+      messages: [{ role: 'user', content: teachPrompt }]
+    });
+
+    const textContent = response.content.find(block => block.type === 'text');
+
+    res.json({ success: true, lesson: textContent.text });
+
+  } catch (error) {
+    console.error('Teaching error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Helper function to shuffle array
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 // Get mock data for visualization panels
 app.get('/api/data/flights', (req, res) => {
   res.json({ success: true, data: mockFlightData });

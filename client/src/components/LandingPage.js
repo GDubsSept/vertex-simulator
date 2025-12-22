@@ -7,10 +7,11 @@ import {
   Zap, 
   Target,
   Shield,
-  Clock
+  Clock,
+  ArrowLeft
 } from 'lucide-react';
 
-const LandingPage = ({ onStartSimulation }) => {
+const LandingPage = ({ onStartSimulation, onBack }) => {
   const [selectedRole, setSelectedRole] = useState(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState(null);
 
@@ -71,6 +72,12 @@ const LandingPage = ({ onStartSimulation }) => {
       <header className="border-b border-neutral-800 bg-neutral-900/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center gap-3">
+            <button
+              onClick={onBack}
+              className="p-2 hover:bg-neutral-800 rounded-lg transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 text-neutral-400" />
+            </button>
             <div className="w-10 h-10 rounded-lg bg-vertex-600 flex items-center justify-center">
               <Plane className="w-5 h-5 text-white" />
             </div>

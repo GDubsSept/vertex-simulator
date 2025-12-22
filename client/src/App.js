@@ -1,40 +1,57 @@
 import React, { useState } from 'react';
 import LandingPage from './components/LandingPage';
 import SimulationInterface from './components/SimulationInterface';
+import HomePage from './components/HomePage';
+import TestPrep from './components/TestPrep';
 
 const App = () => {
-  const [gameState, setGameState] = useState('landing'); // landing | simulation | completed
+  const [currentPage, setCurrentPage] = useState('home'); // home | simulation-landing | simulation | test-prep | completed
   const [selectedRole, setSelectedRole] = useState(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState(null);
-  const [scenario, setScenario] = useState(null);
   const [grade, setGrade] = useState(null);
 
   const handleStartSimulation = (role, difficulty) => {
     setSelectedRole(role);
     setSelectedDifficulty(difficulty);
-    setGameState('simulation');
+    setCurrentPage('simulation');
   };
 
   const handleSimulationComplete = (gradeData) => {
     setGrade(gradeData);
-    setGameState('completed');
+    setCurrentPage('completed');
   };
 
   const handleRestart = () => {
-    setGameState('landing');
+    setCurrentPage('simulation-landing');
     setSelectedRole(null);
     setSelectedDifficulty(null);
-    setScenario(null);
+    setGrade(null);
+  };
+
+  const handleGoHome = () => {
+    setCurrentPage('home');
+    setSelectedRole(null);
+    setSelectedDifficulty(null);
     setGrade(null);
   };
 
   return (
     <div className="min-h-screen bg-neutral-950 grid-bg">
-      {gameState === 'landing' && (
-        <LandingPage onStartSimulation={handleStartSimulation} />
+      {currentPage === 'home' && (
+        <HomePage 
+          onSelectSimulation={() => setCurrentPage('simulation-landing')}
+          onSelectTestPrep={() => setCurrentPage('test-prep')}
+        />
+      )}
+
+      {currentPage === 'simulation-landing' && (
+        <LandingPage 
+          onStartSimulation={handleStartSimulation} 
+          onBack={handleGoHome}
+        />
       )}
       
-      {gameState === 'simulation' && (
+      {currentPage === 'simulation' && (
         <SimulationInterface
           role={selectedRole}
           difficulty={selectedDifficulty}
@@ -43,19 +60,24 @@ const App = () => {
         />
       )}
       
-      {gameState === 'completed' && (
+      {currentPage === 'completed' && (
         <CompletionScreen 
           grade={grade} 
           role={selectedRole}
-          onRestart={handleRestart} 
+          onRestart={handleRestart}
+          onHome={handleGoHome}
         />
+      )}
+
+      {currentPage === 'test-prep' && (
+        <TestPrep onBack={handleGoHome} />
       )}
     </div>
   );
 };
 
 // Completion Screen Component
-const CompletionScreen = ({ grade, role, onRestart }) => {
+const CompletionScreen = ({ grade, role, onRestart, onHome }) => {
   const gradeColors = {
     'A': 'text-success-400 border-success-500',
     'B': 'text-vertex-400 border-vertex-500',
@@ -160,6 +182,12 @@ const CompletionScreen = ({ grade, role, onRestart }) => {
 
         {/* Actions */}
         <div className="flex gap-4 justify-center">
+          <button
+            onClick={onHome}
+            className="px-6 py-3 bg-neutral-800 hover:bg-neutral-700 text-white rounded-lg font-medium transition-colors"
+          >
+            Back to Home
+          </button>
           <button
             onClick={onRestart}
             className="px-6 py-3 bg-vertex-600 hover:bg-vertex-700 text-white rounded-lg font-medium transition-colors"

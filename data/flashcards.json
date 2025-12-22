@@ -1,0 +1,574 @@
+{
+  "flashcards": [
+    {
+      "id": 1,
+      "category": "Vertex Business",
+      "front": "What are the three distinct supply chain models currently operating at Vertex?",
+      "back": "1. Small Molecule (Cystic Fibrosis) - Continuous Manufacturing.\n2. Cell & Gene Therapy (Sickle Cell/Casgevy) - Vein-to-Vein/Autologous.\n3. High Volume Launch (Acute Pain/Suzetrigine) - Retail Distribution/Scale."
+    },
+    {
+      "id": 2,
+      "category": "Vertex Business",
+      "front": "What is the key strategic shift described in Vertex's 'Vision 2030'?",
+      "back": "Transitioning from a 'Cystic Fibrosis Specialist' to a diversified 'Platform Company' with multiple modalities (CF, Pain, Kidney, Cell Therapy) to diversify revenue before patent cliffs."
+    },
+    {
+      "id": 3,
+      "category": "Operations",
+      "front": "Define 'Vein-to-Vein' Supply Chain.",
+      "back": "A circular supply chain for autologous therapies (like Casgevy). It starts with patient cell collection (Apheresis), moves to manufacturing for editing, and returns to the same patient for infusion. It requires perfect Chain of Identity (COI)."
+    },
+    {
+      "id": 4,
+      "category": "Operations",
+      "front": "What is 'Continuous Manufacturing' (CM) and why is it Vertex's advantage?",
+      "back": "A non-stop manufacturing flow (Powder -> Granulation -> Drying -> Compression) used for CF drugs in Boston. It eliminates 'hold times' and generates massive real-time sensor data (PAT) for AI analysis, unlike traditional Batch processing."
+    },
+    {
+      "id": 5,
+      "category": "Operations",
+      "front": "What is PAT?",
+      "back": "Process Analytical Technology. Sensors (like Near-Infrared Spectroscopy) that measure chemical quality inside the manufacturing pipes in real-time, enabling 'Predictive Quality'."
+    },
+    {
+      "id": 6,
+      "category": "Operations",
+      "front": "Explain Chain of Identity (COI) vs. Chain of Custody (COC).",
+      "back": "COI: The permanent digital link ensuring the product matches the specific patient (Critical for Autologous).\nCOC: The chronological documentation of every person who handled the product and its temperature history."
+    },
+    {
+      "id": 7,
+      "category": "Operations",
+      "front": "What is the difference between Autologous and Allogeneic therapies?",
+      "back": "Autologous: Made from the patient's own cells (Casgevy) - Requires complex logistics/COI.\nAllogeneic: Made from a donor bank (Off-the-shelf) - Simpler logistics but harder biology (rejection risk)."
+    },
+    {
+      "id": 8,
+      "category": "Science",
+      "front": "How does Trikafta work (Mechanism of Action)?",
+      "back": "It combines a 'Corrector' (fixes the CFTR protein shape so it reaches the cell surface) and a 'Potentiator' (opens the chloride channel gate). It treats the underlying cause of CF, not just symptoms."
+    },
+    {
+      "id": 9,
+      "category": "Science",
+      "front": "How does Casgevy work (Mechanism of Action)?",
+      "back": "Uses CRISPR/Cas9 to edit the patient's stem cells. It cuts the 'brake' (BCL11A) that stops Fetal Hemoglobin production. Reactivating Fetal Hemoglobin prevents red blood cells from sickling."
+    },
+    {
+      "id": 10,
+      "category": "Science",
+      "front": "How does Suzetrigine (VX-548) work?",
+      "back": "It is a NaV1.8 inhibitor. It blocks the sodium channel responsible for pain signals on peripheral nerves (body) without affecting the central nervous system (brain), offering pain relief without opioid addiction."
+    },
+    {
+      "id": 11,
+      "category": "Regulatory",
+      "front": "What is 21 CFR Part 11?",
+      "back": "FDA regulation regarding Electronic Records and Electronic Signatures. Digital records must be as secure, auditable, and legally binding as paper signatures. AI tools in GxP must comply with this."
+    },
+    {
+      "id": 12,
+      "category": "Regulatory",
+      "front": "What does GxP stand for?",
+      "back": "Good 'x' Practice. The umbrella term for regulations: GMP (Good Manufacturing Practice), GCP (Good Clinical Practice), GLP (Good Laboratory Practice)."
+    },
+    {
+      "id": 13,
+      "category": "Regulatory",
+      "front": "Explain CSV vs. CSA validation models.",
+      "back": "CSV (Computer System Validation): Old model, document-heavy, 'Test everything.'\nCSA (Computer Software Assurance): New FDA guidance, risk-based, 'Test high-risk features,' relies on critical thinking. Enables faster AI adoption."
+    },
+    {
+      "id": 14,
+      "category": "Regulatory",
+      "front": "What is a CAPA?",
+      "back": "Corrective and Preventive Action. The formal GxP process for investigating a failure (Deviation), fixing the root cause, and implementing controls to prevent recurrence."
+    },
+    {
+      "id": 15,
+      "category": "Operations",
+      "front": "What is Tech Transfer?",
+      "back": "The process of moving a drug 'recipe' (process parameters) from R&D (Small Scale) to Commercial Manufacturing (Large Scale). A major point of data loss and manual error."
+    },
+    {
+      "id": 16,
+      "category": "Regulatory",
+      "front": "What is DSCSA?",
+      "back": "Drug Supply Chain Security Act. US law requiring unit-level serialization ('Track and Trace') for every sellable package to prevent counterfeiting."
+    },
+    {
+      "id": 17,
+      "category": "AI Architecture",
+      "front": "What is RAG (Retrieval-Augmented Generation)?",
+      "back": "An AI architecture where the model retrieves specific external data (e.g., PDFs, Database records) and injects it into the prompt context before answering. Prevents hallucinations and enables citation."
+    },
+    {
+      "id": 18,
+      "category": "AI Architecture",
+      "front": "What is a Vector Database?",
+      "back": "A database that stores data as mathematical embeddings (vectors) rather than text. It enables 'Semantic Search' (finding concepts based on meaning, not just exact keywords). Essential for RAG."
+    },
+    {
+      "id": 19,
+      "category": "AI Architecture",
+      "front": "What is the ReAct Pattern?",
+      "back": "Reason + Act. An AI Agent architecture where the model loops through: 1. Thought ('I need data'), 2. Action (Calls API), 3. Observation (Reads API result)."
+    },
+    {
+      "id": 20,
+      "category": "AI Architecture",
+      "front": "What is the 'Context Window'?",
+      "back": "The limit on how much text (tokens) an AI model can process in one prompt. Large context windows allow feeding entire batch records or SOPs into the model for analysis."
+    },
+    {
+      "id": 21,
+      "category": "AI Architecture",
+      "front": "What is 'Grounding'?",
+      "back": "The technique of anchoring AI outputs to verifiable, real-world data sources (like an internal ERP or Document) to ensure accuracy and prevent fabrication."
+    },
+    {
+      "id": 22,
+      "category": "AI Architecture",
+      "front": "What is 'Temperature' in LLMs?",
+      "back": "A parameter (0.0 to 1.0) controlling randomness. For GxP supply chain agents, you want Temperature = 0 (Deterministic) to ensure consistent, repeatable answers."
+    },
+    {
+      "id": 23,
+      "category": "Data Architecture",
+      "front": "What is a Data Mesh?",
+      "back": "A decentralized data architecture where specific domains (e.g., 'Cell Therapy Team') own and manage their own data products, rather than a central IT team managing a monolithic Data Lake."
+    },
+    {
+      "id": 24,
+      "category": "IT Infrastructure",
+      "front": "What is MQTT?",
+      "back": "Message Queuing Telemetry Transport. A lightweight messaging protocol used for IoT sensors (like freezer monitors) to stream data with low bandwidth."
+    },
+    {
+      "id": 25,
+      "category": "Software Engineering",
+      "front": "What is Idempotency?",
+      "back": "A property where performing an operation multiple times yields the same result. Critical for Agentic AI (e.g., an agent shouldn't place 5 duplicate orders just because it retried the API call)."
+    },
+    {
+      "id": 26,
+      "category": "AI Tools",
+      "front": "What is LangChain?",
+      "back": "A software framework for developing applications powered by LLMs. It handles the 'glue' between the AI model, the memory, and the external tools (APIs)."
+    },
+    {
+      "id": 27,
+      "category": "IT Infrastructure",
+      "front": "What is OData?",
+      "back": "Open Data Protocol. The standard REST-based protocol used by SAP S/4HANA for API access. AI Agents typically need to speak OData to query SAP."
+    },
+    {
+      "id": 28,
+      "category": "Software Engineering",
+      "front": "What is Pydantic?",
+      "back": "A Python library for data validation. Critical for Agents to ensure the unstructured JSON they generate matches the strict schema required by an ERP system."
+    },
+    {
+      "id": 29,
+      "category": "Cloud Computing",
+      "front": "What is AWS Lambda?",
+      "back": "A Serverless compute service. Used to run specific Agent functions (like 'Check Inventory') in response to events without managing a server."
+    },
+    {
+      "id": 30,
+      "category": "Cloud Computing",
+      "front": "What is AWS SQS?",
+      "back": "Simple Queue Service. Used for asynchronous processing. Enables you to queue up thousands of risk calculations in the background without crashing the main application."
+    },
+    {
+      "id": 31,
+      "category": "Software Engineering",
+      "front": "What is Docker?",
+      "back": "A platform for containerization. It packages an Agent and its dependencies so it runs identically on a laptop, in the cloud, or on a factory edge device."
+    },
+    {
+      "id": 37,
+      "category": "AI Strategy",
+      "front": "What is Human-in-the-Loop (HITL)?",
+      "back": "A workflow where the AI performs the work (Drafts report) but a human must review and approve it (Signs report). This is the standard for GxP AI validation."
+    },
+    {
+      "id": 38,
+      "category": "AI Strategy",
+      "front": "What is the 'Walled Garden' LLM strategy?",
+      "back": "Hosting an LLM (like Llama 3 or GPT-4) inside your own Virtual Private Cloud (VPC) so no proprietary data (IP) ever leaves the Vertex network."
+    },
+    {
+      "id": 39,
+      "category": "Cloud Computing",
+      "front": "What is 'Distributed Computing' in the Vertex context?",
+      "back": "Using clusters (Spark/Databricks) to process massive parallel datasets (e.g., global sensor streams) that are too large for a single machine."
+    },
+    {
+      "id": 40,
+      "category": "Cloud Computing",
+      "front": "What is 'High Performance Computing' (HPC) in the Vertex context?",
+      "back": "Using GPU clusters for computationally intensive tasks like training/fine-tuning Generative AI models or running molecular dynamics simulations."
+    },
+    {
+      "id": 41,
+      "category": "Operations",
+      "front": "What is a CDMO?",
+      "back": "Contract Development & Manufacturing Organization (e.g., Lonza). An external partner who manufactures the drug. A major challenge for data integration."
+    },
+    {
+      "id": 42,
+      "category": "IT Systems",
+      "front": "What is LIMS?",
+      "back": "Laboratory Information Management System (e.g., LabWare). Holds the Quality data (Test Results). Needs to be connected to the MES (Manufacturing data)."
+    },
+    {
+      "id": 43,
+      "category": "IT Systems",
+      "front": "What is MES?",
+      "back": "Manufacturing Execution System (e.g., Werum PAS-X). The software that runs the factory floor and creates the Electronic Batch Record (EBR)."
+    },
+    {
+      "id": 44,
+      "category": "IT Systems",
+      "front": "What is ERP?",
+      "back": "Enterprise Resource Planning (e.g., SAP S/4HANA). The system of record for Financials and Inventory."
+    },
+    {
+      "id": 45,
+      "category": "Digital Strategy",
+      "front": "What is a 'Digital Twin'?",
+      "back": "A virtual replica of a physical process (like the supply chain network or the continuous rig). Used for simulation and 'what-if' scenario planning."
+    },
+    {
+      "id": 46,
+      "category": "AI Architecture",
+      "front": "Explain 'Semantic Search' vs. 'Keyword Search'.",
+      "back": "Keyword: Matches exact words ('Fail' matches 'Fail'). Semantic: Matches meaning ('Fail' matches 'Broken', 'Error', 'Stop'). Powered by Vector Databases."
+    },
+    {
+      "id": 47,
+      "category": "AI Architecture",
+      "front": "What is 'Prompt Engineering'?",
+      "back": "The art of crafting inputs to an LLM to get the best output. Includes techniques like 'Chain of Thought' (asking the AI to explain its steps)."
+    },
+    {
+      "id": 48,
+      "category": "AI Architecture",
+      "front": "What is 'Chain of Thought' Prompting?",
+      "back": "Asking the AI to 'Think step-by-step' before answering. Crucial for complex logic tasks in supply chain planning to reduce errors."
+    },
+    {
+      "id": 49,
+      "category": "AI Performance",
+      "front": "What is 'Inference' time?",
+      "back": "The time it takes for the AI model to generate an answer. Low inference time (low latency) is critical for real-time manufacturing alerts."
+    },
+    {
+      "id": 50,
+      "category": "Digital Strategy",
+      "front": "What is a 'System of Record' vs. 'System of Intelligence'?",
+      "back": "Record: The database of truth (SAP). Intelligence: The AI layer on top that provides insights (Peakview/Agents). Don't try to make the Intelligence layer the Record."
+    },
+    {
+      "id": 51,
+      "category": "IT Infrastructure",
+      "front": "What is an API Gateway?",
+      "back": "The 'Front Door' for your APIs. It handles security, rate limiting, and routing traffic to the backend services. Essential for protecting legacy ERPs from AI agent traffic."
+    },
+    {
+      "id": 52,
+      "category": "Security",
+      "front": "What is RBAC?",
+      "back": "Role-Based Access Control. Restricting system access based on user roles (e.g., Viewer vs. Editor). Critical for data security in multi-tenant environments."
+    },
+    {
+      "id": 53,
+      "category": "Security",
+      "front": "What is Row-Level Security (RLS)?",
+      "back": "A database security feature where users can only see rows that match their Organization ID. The most secure way to separate tenant data in SQL."
+    },
+    {
+      "id": 54,
+      "category": "IT Infrastructure",
+      "front": "What is Redis used for?",
+      "back": "In-memory data structure store. Used for Caching (speed) and Session Management (keeping users logged in)."
+    },
+    {
+      "id": 55,
+      "category": "Software Engineering",
+      "front": "What is React?",
+      "back": "A JavaScript library for building user interfaces (Front-end). Used to build the Peakview dashboard."
+    },
+    {
+      "id": 56,
+      "category": "Software Engineering",
+      "front": "What is Node.js?",
+      "back": "A JavaScript runtime built on Chrome's V8 engine. Used to run the Peakview Backend server."
+    },
+    {
+      "id": 57,
+      "category": "Software Engineering",
+      "front": "What is PostgreSQL?",
+      "back": "An open-source relational database. The primary 'System of Record' for the Peakview platform."
+    },
+    {
+      "id": 58,
+      "category": "AI Architecture",
+      "front": "What is an 'Agent'?",
+      "back": "An autonomous software entity that perceives its environment (Data), reasons about it (LLM), and takes action (Tools) to achieve a goal."
+    },
+    {
+      "id": 59,
+      "category": "AI Architecture",
+      "front": "What is 'Orchestration' in AI?",
+      "back": "Coordinating multiple Agents to solve a complex problem (e.g., One agent checks stock, another checks weather, a third updates the plan)."
+    },
+    {
+      "id": 60,
+      "category": "AI Architecture",
+      "front": "What is 'Few-Shot' Prompting?",
+      "back": "Providing the AI with a few examples of the desired input/output format in the prompt to improve accuracy without retraining."
+    },
+    {
+      "id": 61,
+      "category": "AI Architecture",
+      "front": "What is 'Zero-Shot' Prompting?",
+      "back": "Asking the AI to perform a task without giving it any specific examples. Relies entirely on its pre-trained knowledge."
+    },
+    {
+      "id": 62,
+      "category": "Operations",
+      "front": "What is a 'Control Tower'?",
+      "back": "A supply chain dashboard that provides end-to-end visibility and decision support across the entire network (Suppliers, Logistics, Mfg)."
+    },
+    {
+      "id": 63,
+      "category": "Operations",
+      "front": "What is 'Demand Sensing'?",
+      "back": "Using real-time data (POS, Social Sentiment, Weather) to predict demand spikes faster than traditional time-series forecasting. Critical for the Pain launch."
+    },
+    {
+      "id": 64,
+      "category": "Operations",
+      "front": "What is 'Predictive Maintenance'?",
+      "back": "Using AI on sensor data to predict when a machine will break *before* it breaks. Key for Continuous Manufacturing."
+    },
+    {
+      "id": 65,
+      "category": "Operations",
+      "front": "What is 'Yield Optimization'?",
+      "back": "Using AI to analyze process parameters to maximize the amount of good product produced per batch."
+    },
+    {
+      "id": 66,
+      "category": "Operations",
+      "front": "What is 'Inventory Optimization'?",
+      "back": "Balancing Service Level (Availability) vs. Working Capital (Cost). AI helps find the perfect 'Safety Stock' level."
+    },
+    {
+      "id": 67,
+      "category": "Operations",
+      "front": "What is 'Cold Chain'?",
+      "back": "The temperature-controlled supply chain. Critical for Casgevy (Cryo) and many Biologics (2-8°C)."
+    },
+    {
+      "id": 68,
+      "category": "Operations",
+      "front": "What is 'Excursion' Management?",
+      "back": "The process of handling a temperature breach. AI can automate the risk assessment: 'Did the 2-degree spike affect the drug efficacy?'"
+    },
+    {
+      "id": 69,
+      "category": "Regulatory",
+      "front": "What is 'Validation'?",
+      "back": "The documented process of proving that a system does what it is supposed to do. A GxP requirement."
+    },
+    {
+      "id": 70,
+      "category": "Regulatory",
+      "front": "What is 'Serialization'?",
+      "back": "Assigning a unique serial number to each saleable unit. Required by DSCSA."
+    },
+    {
+      "id": 71,
+      "category": "Leadership",
+      "front": "What is 'Agile' in the GxP context?",
+      "back": "Adapting project management methodology (Sprints, Standups) to Pharma. Using CSA (Risk-based testing) to maintain speed while ensuring compliance."
+    },
+    {
+      "id": 72,
+      "category": "Leadership",
+      "front": "What is 'Change Management'?",
+      "back": "The structured approach to transitioning individuals and teams to a new system. 'Deploying Confidence, not just Code.'"
+    },
+    {
+      "id": 73,
+      "category": "Regulatory",
+      "front": "What is 'Data Sovereignty'?",
+      "back": "The concept that data is subject to the laws of the country it is located in. Important for global trials and EU/GDPR compliance."
+    },
+    {
+      "id": 74,
+      "category": "AI Architecture",
+      "front": "What is 'Edge AI'?",
+      "back": "Running AI models locally on the device (Edge) rather than in the cloud. Reduces latency and bandwidth."
+    },
+    {
+      "id": 75,
+      "category": "Security",
+      "front": "What is 'Tokenization' (Security)?",
+      "back": "Replacing sensitive data (like Patient Names) with a random token. The AI sees the token, keeping the PII safe."
+    },
+    {
+      "id": 76,
+      "category": "AI Tools",
+      "front": "What is 'Pinecone'?",
+      "back": "A popular commercial Vector Database. Often used for RAG applications."
+    },
+    {
+      "id": 77,
+      "category": "AI Tools",
+      "front": "What is 'Weaviate'?",
+      "back": "An open-source Vector Database. Another common option for RAG."
+    },
+    {
+      "id": 78,
+      "category": "AI Tools",
+      "front": "What is 'AutoGPT'?",
+      "back": "An experimental open-source attempt to make GPT-4 fully autonomous. A concept to know as an example of 'Agentic' behavior."
+    },
+    {
+      "id": 79,
+      "category": "AI Tools",
+      "front": "What is 'Streamlit'?",
+      "back": "A python library for quickly building data apps. Great for prototyping internal tools for Supply Chain planners."
+    },
+    {
+      "id": 80,
+      "category": "Data Tools",
+      "front": "What is 'Snowflake'?",
+      "back": "A cloud data warehouse. Often used as the central repository for curated analytics data in modern stacks."
+    },
+    {
+      "id": 81,
+      "category": "AI Evaluation",
+      "front": "What is 'RAGAS'?",
+      "back": "Retrieval Augmented Generation Assessment. A framework for scoring RAG systems. It measures 'Faithfulness' (Did the AI make it up?) and 'Answer Relevance' (Did it answer the user's question?)."
+    },
+    {
+      "id": 82,
+      "category": "AI Evaluation",
+      "front": "What is 'Hybrid Search'?",
+      "back": "Combining 'Keyword Search' (BM25) with 'Semantic Search' (Vectors). Critical in Supply Chain because Vectors are bad at finding exact SKU numbers (e.g., 'VX-548'), while Keywords are perfect for it."
+    },
+    {
+      "id": 83,
+      "category": "AI Evaluation",
+      "front": "What is the 'F1 Score'?",
+      "back": "The harmonic mean of Precision and Recall. In AI classification (e.g., 'Is this a risk?'), it balances the 'False Positives' against the 'False Negatives'."
+    },
+    {
+      "id": 84,
+      "category": "AI Architecture",
+      "front": "What is 'Re-Ranking' (Cross-Encoder)?",
+      "back": "A second step in RAG. After the Vector DB finds the top 50 documents, a 'Re-Ranker' model carefully reads them to pick the top 3 most relevant ones for the LLM. Increases accuracy significantly."
+    },
+    {
+      "id": 85,
+      "category": "AI Architecture",
+      "front": "What is a 'Knowledge Graph'?",
+      "back": "Structuring data as connected entities (Drug -> Targets -> Protein) rather than just rows and columns. Vertex uses Knowledge Graphs to map scientific relationships that AI can traverse."
+    },
+    {
+      "id": 86,
+      "category": "Biotech Logistics",
+      "front": "Explain 'Active' vs. 'Passive' Cold Chain Shippers.",
+      "back": "Active: Battery-powered containers with compressors (e.g., Envirotainer). Precise but expensive.\nPassive: Insulated boxes using Phase Change Material (dry ice/gel packs). Cheaper but riskier for long delays."
+    },
+    {
+      "id": 87,
+      "category": "Biotech Logistics",
+      "front": "What is a 'Data Logger'?",
+      "back": "A USB device inside the shipment that records temp every 10 minutes. Upon arrival, it is plugged in to verify 'Chain of Custody.' If it shows a spike, the drug is quarantined."
+    },
+    {
+      "id": 88,
+      "category": "Financials",
+      "front": "What is 'COGS' vs. 'Cost-to-Serve'?",
+      "back": "COGS: Cost of Goods Sold (Raw material + Mfg cost).\nCost-to-Serve: COGS + Logistics + Customs + Inventory Holding Cost. The *true* cost of getting the drug to the patient."
+    },
+    {
+      "id": 89,
+      "category": "Financials",
+      "front": "What is 'Working Capital' in Supply Chain?",
+      "back": "The cash tied up in Inventory + Accounts Receivable - Accounts Payable. Reducing inventory frees up cash for R&D. A key metric for the CFO."
+    },
+    {
+      "id": 90,
+      "category": "Data Engineering",
+      "front": "What is 'dbt' (Data Build Tool)?",
+      "back": "A standard tool for transforming data in the warehouse. It lets analysts write SQL 'Select' statements to create clean tables, handling the 'T' in ELT."
+    },
+    {
+      "id": 91,
+      "category": "Data Engineering",
+      "front": "What is 'Airflow'?",
+      "back": "A platform to programmatically schedule and monitor data pipelines (Workflows). 'If the SAP extraction fails, retry 3 times, then alert the team.'"
+    },
+    {
+      "id": 92,
+      "category": "Security",
+      "front": "What is 'Zero Trust' Security?",
+      "back": "The security model that assumes no user or device is trustworthy, even if they are inside the corporate network. Requires continuous verification (MFA) for every access request."
+    },
+    {
+      "id": 93,
+      "category": "Regulatory",
+      "front": "What is 'Change Control'?",
+      "back": "The formal GxP process used to modify a validated system. You cannot just 'push code.' You must open a Change Request, assess risk, test, and get approval."
+    },
+    {
+      "id": 94,
+      "category": "Regulatory",
+      "front": "What is 'UAT'?",
+      "back": "User Acceptance Testing. The final phase where actual business users (Planners/Scientists) test the software to ensure it handles real-world scenarios before Go-Live."
+    },
+    {
+      "id": 95,
+      "category": "Vertex Business",
+      "front": "What is 'AMAX' (Vertex Pipeline)?",
+      "back": "Inaxaplin. Vertex's investigational drug for APOL1-mediated kidney disease (AMKD). It represents the next major pillar of growth after CF, Pain, and Casgevy."
+    },
+    {
+      "id": 96,
+      "category": "AI Strategy",
+      "front": "What is 'Technical Debt'?",
+      "back": "The implied cost of additional rework caused by choosing an easy (limited) solution now instead of using a better approach that would take longer. 'Hardcoding this SOP is technical debt; building a RAG pipeline is the investment.'"
+    },
+    {
+      "id": 97,
+      "category": "Software Architecture",
+      "front": "What is a 'Micro-Frontend'?",
+      "back": "An architectural style where a web app is composed of semi-independent frontends. Allows the 'Quality' team to build their UI in React while the 'Logistics' team uses Vue, all inside one shell."
+    },
+    {
+      "id": 98,
+      "category": "Vertex Business",
+      "front": "What is 'Heme' (Hematology)?",
+      "back": "The therapeutic area covering blood diseases like Sickle Cell and Beta Thalassemia. You will hear Casgevy referred to as the 'Heme' franchise."
+    },
+    {
+      "id": 99,
+      "category": "Supply Chain",
+      "front": "What is a '3PL'?",
+      "back": "Third-Party Logistics provider (e.g., UPS Healthcare, DHL). They own the trucks and warehouses; Vertex owns the strategy and inventory."
+    },
+    {
+      "id": 100,
+      "category": "Data Science",
+      "front": "What is 'Synthetic Data'?",
+      "back": "Artificially generated data used to train AI when real data is scarce or sensitive (PII). Useful for training Casgevy agents without exposing real patient names."
+    }
+  ]
+}
