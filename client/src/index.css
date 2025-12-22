@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom scrollbar for dark mode */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Custom selection color */
+::selection {
+  background: rgba(51, 119, 255, 0.3);
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Base body styling */
+body {
+  @apply bg-neutral-950 text-neutral-100 antialiased;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+/* Terminal-style text effect */
+.terminal-text {
+  @apply font-mono;
+  text-shadow: 0 0 10px rgba(51, 119, 255, 0.5);
+}
+
+/* Glowing border effect */
+.glow-border {
+  box-shadow: 0 0 0 1px rgba(51, 119, 255, 0.3),
+              0 0 20px rgba(51, 119, 255, 0.1);
+}
+
+/* Pulsing alert indicator */
+.alert-pulse {
+  animation: alertPulse 2s ease-in-out infinite;
+}
+
+@keyframes alertPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Typing cursor effect */
+.typing-cursor::after {
+  content: '▋';
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Grid background pattern */
+.grid-bg {
+  background-image: 
+    linear-gradient(to right, rgba(51, 119, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(51, 119, 255, 0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Gradient text */
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-vertex-400 to-vertex-600;
+}
+
+/* Card hover effect */
+.card-hover {
+  @apply transition-all duration-300;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(51, 119, 255, 0.15);
+}
