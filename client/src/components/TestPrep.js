@@ -21,7 +21,8 @@ const TestPrep = ({ onBack }) => {
   const [config, setConfig] = useState({
     length: 20,
     categories: [],
-    weakAreas: []
+    weakAreas: [],
+    questionFormat: 'mixed' // 'multiple_choice', 'free_text', 'mixed'
   });
   const [availableCategories, setAvailableCategories] = useState([]);
   const [questions, setQuestions] = useState([]);
@@ -63,7 +64,8 @@ const TestPrep = ({ onBack }) => {
       const response = await axios.post('/api/test/generate', {
         length: config.length,
         categories: config.categories.length > 0 ? config.categories : null,
-        weakAreas: config.weakAreas.length > 0 ? config.weakAreas : null
+        weakAreas: config.weakAreas.length > 0 ? config.weakAreas : null,
+        questionFormat: config.questionFormat
       });
 
       if (response.data.success) {
@@ -291,6 +293,12 @@ const ConfigScreen = ({ config, setConfig, categories, onStart, hasWeakAreas }) 
     { value: 60, label: 'Long', desc: '~45 minutes' }
   ];
 
+  const formats = [
+    { value: 'multiple_choice', label: 'Multiple Choice', desc: 'All questions have 4 options' },
+    { value: 'free_text', label: 'Free Response', desc: 'All questions require typed answers' },
+    { value: 'mixed', label: 'Mixed', desc: '60% multiple choice, 40% free response' }
+  ];
+
   const toggleCategory = (cat) => {
     setConfig(prev => ({
       ...prev,
@@ -333,6 +341,29 @@ const ConfigScreen = ({ config, setConfig, categories, onStart, hasWeakAreas }) 
               <div className="text-2xl font-bold text-neutral-100 mb-1">{len.value}</div>
               <div className="text-sm text-neutral-400">{len.label}</div>
               <div className="text-xs text-neutral-500">{len.desc}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Question Format */}
+      <div className="mb-8">
+        <h3 className="text-sm font-mono text-neutral-500 uppercase tracking-wider mb-4">
+          Question Format
+        </h3>
+        <div className="grid grid-cols-3 gap-3">
+          {formats.map(fmt => (
+            <button
+              key={fmt.value}
+              onClick={() => setConfig(prev => ({ ...prev, questionFormat: fmt.value }))}
+              className={`p-4 rounded-xl border-2 transition-all ${
+                config.questionFormat === fmt.value
+                  ? 'border-vertex-500 bg-vertex-500/10'
+                  : 'border-neutral-800 bg-neutral-900/50 hover:border-neutral-700'
+              }`}
+            >
+              <div className="text-sm font-semibold text-neutral-100 mb-1">{fmt.label}</div>
+              <div className="text-xs text-neutral-500">{fmt.desc}</div>
             </button>
           ))}
         </div>
@@ -706,38 +737,90 @@ const ResultsScreen = ({ results, questions, answers, onRetakeWeakAreas, onTeach
         <div className="space-y-4 mb-6">
           {questions.map((q, i) => {
             const answerData = results.answers[i];
+            const isFreeText = q.type === 'free_text';
+            const scoreColor = answerData?.score >= 90 ? 'text-success-400' :
+                              answerData?.score >= 70 ? 'text-vertex-400' :
+                              answerData?.score >= 50 ? 'text-warning-400' :
+                              'text-critical-400';
+            
+            // For multiple choice: binary correct/incorrect
+            // For free text: score-based coloring (partial credit)
+            const borderClass = isFreeText
+              ? (answerData?.score >= 70 ? 'border-vertex-500/30 bg-vertex-500/5' : 'border-warning-500/30 bg-warning-500/5')
+              : (answerData?.is_correct ? 'border-success-500/30 bg-success-500/5' : 'border-critical-500/30 bg-critical-500/5');
+
             return (
               <div 
                 key={i}
-                className={`border rounded-xl p-4 ${
-                  answerData?.is_correct 
-                    ? 'border-success-500/30 bg-success-500/5'
-                    : 'border-critical-500/30 bg-critical-500/5'
-                }`}
+                className={`border rounded-xl p-4 ${borderClass}`}
               >
-                <div className="flex items-start gap-3 mb-3">
-                  {answerData?.is_correct ? (
-                    <CheckCircle className="w-5 h-5 text-success-500 flex-none" />
-                  ) : (
-                    <XCircle className="w-5 h-5 text-critical-500 flex-none" />
-                  )}
-                  <div className="flex-1">
-                    <p className="text-neutral-100 text-sm mb-2">{q.question}</p>
-                    <div className="text-xs text-neutral-500 mb-2">
-                      Your answer: <span className="text-neutral-300">{answers[i]?.answer || 'No answer'}</span>
-                    </div>
-                    {!answerData?.is_correct && (
-                      <div className="text-xs text-success-400 mb-2">
-                        Correct: {q.type === 'multiple_choice' ? q.correct_answer : 'See explanation'}
-                      </div>
-                    )}
-                    <p className="text-xs text-neutral-400">{answerData?.feedback}</p>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-lg font-mono font-bold text-neutral-100">
+                <div className="flex items-start gap-3">
+                  {/* Icon - only show check/x for multiple choice */}
+                  {isFreeText ? (
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${scoreColor} bg-neutral-800`}>
                       {answerData?.score}
                     </div>
-                    <div className="text-xs text-neutral-500">points</div>
+                  ) : (
+                    answerData?.is_correct ? (
+                      <CheckCircle className="w-5 h-5 text-success-500 flex-none mt-1" />
+                    ) : (
+                      <XCircle className="w-5 h-5 text-critical-500 flex-none mt-1" />
+                    )
+                  )}
+                  
+                  <div className="flex-1">
+                    {/* Question type badge */}
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className={`px-2 py-0.5 rounded text-xs ${
+                        isFreeText ? 'bg-vertex-500/20 text-vertex-400' : 'bg-neutral-700 text-neutral-400'
+                      }`}>
+                        {isFreeText ? 'Free Response' : 'Multiple Choice'}
+                      </span>
+                      <span className="text-xs text-neutral-500">{q.category}</span>
+                    </div>
+                    
+                    {/* Question */}
+                    <p className="text-neutral-100 text-sm mb-3">{q.question}</p>
+                    
+                    {/* User's answer */}
+                    <div className="bg-neutral-800/50 rounded-lg p-3 mb-3">
+                      <div className="text-xs text-neutral-500 mb-1">Your answer:</div>
+                      <div className="text-sm text-neutral-300">
+                        {answers[i]?.answer || <span className="text-neutral-500 italic">No answer provided</span>}
+                      </div>
+                    </div>
+                    
+                    {/* For multiple choice: show correct answer if wrong */}
+                    {!isFreeText && !answerData?.is_correct && (
+                      <div className="bg-success-500/10 rounded-lg p-3 mb-3">
+                        <div className="text-xs text-success-400 mb-1">Correct answer:</div>
+                        <div className="text-sm text-success-300">{q.correct_answer}</div>
+                      </div>
+                    )}
+                    
+                    {/* Explanation/Feedback - always show for learning */}
+                    {answerData?.feedback && (
+                      <div className="bg-neutral-800/30 rounded-lg p-3 border border-neutral-700">
+                        <div className="text-xs text-vertex-400 mb-1 font-medium">Explanation:</div>
+                        <p className="text-sm text-neutral-300 leading-relaxed">{answerData.feedback}</p>
+                        {answerData?.missed && (
+                          <div className="mt-2 pt-2 border-t border-neutral-700">
+                            <div className="text-xs text-warning-400 mb-1">What you missed:</div>
+                            <p className="text-sm text-neutral-400">{answerData.missed}</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Score - only show points label for multiple choice */}
+                  <div className="text-right flex-none">
+                    <div className={`text-lg font-mono font-bold ${scoreColor}`}>
+                      {answerData?.score}
+                    </div>
+                    <div className="text-xs text-neutral-500">
+                      {isFreeText ? '/ 100' : 'points'}
+                    </div>
                   </div>
                 </div>
               </div>

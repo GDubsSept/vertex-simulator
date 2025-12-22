@@ -611,7 +611,7 @@ app.get('/api/flashcards/categories', (req, res) => {
 // Generate a test
 app.post('/api/test/generate', async (req, res) => {
   try {
-    const { length, categories, weakAreas, difficulty } = req.body;
+    const { length, categories, weakAreas, difficulty, questionFormat } = req.body;
     
     // Filter flashcards by category if specified
     let availableCards = flashcardsData.flashcards;
@@ -635,12 +635,21 @@ app.post('/api/test/generate', async (req, res) => {
     // Shuffle and select cards
     const selectedCards = shuffleArray(availableCards).slice(0, Math.min(length, availableCards.length));
     
+    // Determine question format instructions
+    let formatInstructions;
+    if (questionFormat === 'multiple_choice') {
+      formatInstructions = '- 100% multiple choice (4 options, one correct)';
+    } else if (questionFormat === 'free_text') {
+      formatInstructions = '- 100% free text (short answer requiring typed response)';
+    } else {
+      formatInstructions = '- 60% multiple choice (4 options, one correct)\n- 40% free text (short answer)';
+    }
+
     // Generate questions using AI
     const questionsPrompt = `You are a test generator for a Vertex Pharmaceuticals supply chain interview preparation tool.
 
-Based on these flashcards, generate ${length} test questions. Mix question types:
-- 60% multiple choice (4 options, one correct)
-- 40% free text (short answer)
+Based on these flashcards, generate ${length} test questions. Question format:
+${formatInstructions}
 
 For each question, also generate:
 - A difficulty level (easy, medium, hard)
@@ -751,6 +760,19 @@ GRADING STANDARDS:
   - 70-89: Mostly correct, missing minor details
   - 50-69: Partially correct, missing key concepts
   - Below 50: Incorrect or too vague
+
+CRITICAL - FEEDBACK REQUIREMENTS:
+For ANY answer scoring below 90, provide THOROUGH educational feedback that:
+1. Explains the correct answer in detail (2-3 sentences minimum)
+2. Explains WHY this matters in a Vertex/pharma context
+3. Provides a memory tip or real-world example to help remember
+4. For free text: acknowledges what they got right before explaining what was missed
+
+Example of GOOD feedback for a wrong answer:
+"The correct answer is RAG (Retrieval-Augmented Generation). RAG works by first retrieving relevant documents from a vector database, then injecting that context into the prompt before the LLM generates a response. This is critical at Vertex because it allows AI systems to reference current SOPs and batch records without hallucinating outdated information. Memory tip: Think 'RAG = Research And Ground' - the AI researches first, then grounds its answer in real data."
+
+Example of BAD feedback (too brief):
+"Incorrect. The answer is RAG."
 
 Return ONLY valid JSON:
 {
