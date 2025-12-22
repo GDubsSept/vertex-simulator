@@ -30,6 +30,7 @@ const SimulationInterface = ({ role, difficulty, onComplete, onExit }) => {
   const [timerActive, setTimerActive] = useState(false);
   const [turnCount, setTurnCount] = useState(0);
   const [showGradeButton, setShowGradeButton] = useState(false);
+  const [showMobileData, setShowMobileData] = useState(false);
   const messagesEndRef = useRef(null);
 
   // Timer effect
@@ -220,45 +221,55 @@ const SimulationInterface = ({ role, difficulty, onComplete, onExit }) => {
     <div className="h-screen flex flex-col overflow-hidden">
       {/* Header */}
       <header className="flex-none border-b border-neutral-800 bg-neutral-900/80 backdrop-blur-sm">
-        <div className="px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full ${
+        <div className="px-3 lg:px-6 py-2 lg:py-3">
+          {/* Top row */}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <div className={`w-2 h-2 flex-none rounded-full ${
                 scenario?.alert_severity === 'CRITICAL' ? 'bg-critical-500 alert-pulse' :
                 scenario?.alert_severity === 'HIGH' ? 'bg-warning-500 alert-pulse' :
                 'bg-vertex-500'
               }`} />
-              <span className="font-mono text-sm text-neutral-400">
-                {scenario?.alert_severity || 'ACTIVE'} ALERT
+              <span className="font-mono text-xs text-neutral-400 hidden sm:inline">
+                {scenario?.alert_severity || 'ACTIVE'}
               </span>
-            </div>
-            <span className="text-neutral-600">|</span>
-            <h1 className="font-semibold text-neutral-100 truncate max-w-md">
-              {scenario?.alert_title || 'Supply Chain Scenario'}
-            </h1>
-          </div>
-          
-          <div className="flex items-center gap-6">
-            {/* Timer */}
-            <div className="flex items-center gap-2 text-neutral-400">
-              <Clock className="w-4 h-4" />
-              <span className="font-mono text-sm">{formatTime(timer)}</span>
+              <h1 className="font-semibold text-neutral-100 truncate text-sm lg:text-base">
+                {scenario?.alert_title || 'Supply Chain Scenario'}
+              </h1>
             </div>
             
-            {/* Turn Counter */}
-            <div className="text-neutral-400 text-sm">
-              Turn <span className="text-neutral-100 font-mono">{turnCount + 1}</span>
-            </div>
+            <div className="flex items-center gap-2 lg:gap-6 flex-none">
+              {/* Timer */}
+              <div className="flex items-center gap-1 lg:gap-2 text-neutral-400">
+                <Clock className="w-4 h-4" />
+                <span className="font-mono text-xs lg:text-sm">{formatTime(timer)}</span>
+              </div>
+              
+              {/* Turn Counter */}
+              <div className="text-neutral-400 text-xs lg:text-sm hidden sm:block">
+                Turn <span className="text-neutral-100 font-mono">{turnCount + 1}</span>
+              </div>
 
-            {/* Exit Button */}
-            <button
-              onClick={onExit}
-              className="flex items-center gap-2 px-3 py-1.5 text-neutral-400 hover:text-neutral-100 
-                hover:bg-neutral-800 rounded-lg transition-colors text-sm"
-            >
-              <LogOut className="w-4 h-4" />
-              Exit
-            </button>
+              {/* Mobile Data Toggle */}
+              <button
+                onClick={() => setShowMobileData(!showMobileData)}
+                className="lg:hidden flex items-center gap-1 px-2 py-1.5 text-neutral-400 hover:text-neutral-100 
+                  hover:bg-neutral-800 rounded-lg transition-colors text-xs"
+              >
+                <Activity className="w-4 h-4" />
+                Data
+              </button>
+
+              {/* Exit Button */}
+              <button
+                onClick={onExit}
+                className="flex items-center gap-1 lg:gap-2 px-2 lg:px-3 py-1.5 text-neutral-400 hover:text-neutral-100 
+                  hover:bg-neutral-800 rounded-lg transition-colors text-xs lg:text-sm"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="hidden sm:inline">Exit</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -404,7 +415,7 @@ const SimulationInterface = ({ role, difficulty, onComplete, onExit }) => {
         </main>
 
         {/* Right Panel - Live Data */}
-        <aside className="hidden lg:block w-96 flex-none border-l border-neutral-800 bg-neutral-900/30 overflow-y-auto">
+        <aside className={`${showMobileData ? 'block' : 'hidden'} lg:block w-full lg:w-96 flex-none border-t lg:border-t-0 lg:border-l border-neutral-800 bg-neutral-900/30 overflow-y-auto max-h-72 lg:max-h-none`}>
           <DataPanel role={role} scenario={scenario} />
         </aside>
       </div>
