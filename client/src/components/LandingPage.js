@@ -83,7 +83,7 @@ const LandingPage = ({ onStartSimulation, onBack }) => {
             </div>
             <div>
               <h1 className="text-lg font-display font-semibold text-neutral-100">
-                Vertex Supply Chain Command Center
+                Supply Chain Scenario Training
               </h1>
               <p className="text-xs text-neutral-500 font-mono tracking-wide">
                 // TRAINING MODULE v1.0

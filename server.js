@@ -594,7 +594,7 @@ app.post('/api/test/generate', async (req, res) => {
     }
 
     // Generate questions using AI
-    const questionsPrompt = `You are a test generator for a Vertex Pharmaceuticals supply chain interview preparation tool.
+    const questionsPrompt = `You are a test generator for a Vertex Pharmaceuticals supply chain training platform.
 
 Based on these flashcards, generate ${length} test questions. Question format:
 ${formatInstructions}
@@ -669,7 +669,7 @@ app.post('/api/test/grade', async (req, res) => {
   try {
     const { questions, answers } = req.body;
     
-    const gradingPrompt = `You are a strict but fair grader for a Vertex Pharmaceuticals interview preparation test.
+    const gradingPrompt = `You are a strict but fair grader for a Vertex Pharmaceuticals supply chain training test.
 
 Grade each answer. Be realistic - don't give full credit for partial answers.
 
@@ -746,7 +746,7 @@ Return ONLY valid JSON:
     "Focus on X because...",
     "Review the concept of Y..."
   ],
-  "interview_readiness": {
+  "mastery_level": {
     "score": 75,
     "feedback": "You show good knowledge but need to work on..."
   }
@@ -786,7 +786,7 @@ app.post('/api/test/teach', async (req, res) => {
       f.category === category || concepts.some(c => f.front.toLowerCase().includes(c.toLowerCase()))
     );
 
-    const teachPrompt = `You are a helpful tutor preparing someone for a Vertex Pharmaceuticals supply chain interview.
+    const teachPrompt = `You are a helpful tutor for a Vertex Pharmaceuticals supply chain training program.
 
 The user is weak in: ${category}
 Specific concepts they struggled with: ${concepts.join(', ')}

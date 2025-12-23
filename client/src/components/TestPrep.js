@@ -630,23 +630,23 @@ const ResultsScreen = ({ results, questions, answers, onRetakeWeakAreas, onTeach
         </p>
       </div>
 
-      {/* Interview Readiness */}
-      {results.interview_readiness && (
+      {/* Mastery Level */}
+      {(results.mastery_level || results.interview_readiness) && (
         <div className="bg-neutral-900/50 border border-neutral-800 rounded-xl p-6 mb-6">
           <h3 className="font-semibold text-neutral-100 mb-3 flex items-center gap-2">
             <GraduationCap className="w-5 h-5 text-vertex-400" />
-            Interview Readiness
+            Mastery Level
           </h3>
           <div className="flex items-center gap-4 mb-3">
             <div className="flex-1 h-3 bg-neutral-800 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-vertex-500 transition-all"
-                style={{ width: `${results.interview_readiness.score}%` }}
+                style={{ width: `${(results.mastery_level || results.interview_readiness).score}%` }}
               />
             </div>
-            <span className="text-neutral-100 font-mono">{results.interview_readiness.score}%</span>
+            <span className="text-neutral-100 font-mono">{(results.mastery_level || results.interview_readiness).score}%</span>
           </div>
-          <p className="text-neutral-400 text-sm">{results.interview_readiness.feedback}</p>
+          <p className="text-neutral-400 text-sm">{(results.mastery_level || results.interview_readiness).feedback}</p>
         </div>
       )}
 

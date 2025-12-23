@@ -19,7 +19,7 @@ const HomePage = ({ onSelectSimulation, onSelectTestPrep }) => {
             </div>
             <div>
               <h1 className="text-lg font-display font-semibold text-neutral-100">
-                Vertex Interview Prep
+                Vertex Training Platform
               </h1>
               <p className="text-xs text-neutral-500 font-mono tracking-wide">
                 // SUPPLY CHAIN & AI TRAINING
@@ -35,8 +35,8 @@ const HomePage = ({ onSelectSimulation, onSelectTestPrep }) => {
           {/* Hero */}
           <div className="text-center mb-12">
             <h2 className="text-4xl lg:text-5xl font-display font-bold text-neutral-100 mb-4">
-              Prepare for Your
-              <span className="block text-vertex-400">Vertex Interview</span>
+              Master
+              <span className="block text-vertex-400">Supply Chain Excellence</span>
             </h2>
             <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
               Master supply chain concepts, AI architecture, and Vertex-specific knowledge 
@@ -61,7 +61,7 @@ const HomePage = ({ onSelectSimulation, onSelectTestPrep }) => {
               </div>
               
               <h3 className="text-2xl font-display font-bold text-neutral-100 mb-2">
-                Flight Simulator
+                Scenario Training
               </h3>
               
               <p className="text-neutral-400 mb-6">
