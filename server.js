@@ -2,19 +2,20 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const Anthropic = require('@anthropic-ai/sdk');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 require('dotenv').config();
-
 const app = express();
 app.use(cors());
 app.use(express.json());
-
 // Serve static React build
 app.use(express.static(path.join(__dirname, 'client/build')));
-
-// Initialize Anthropic
+// Initialize Anthropic (keeping for reference)
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY
 });
+// Initialize Gemini
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const geminiModel = genAI.getGenerativeModel({ model: 'gemini-3-pro-preview' });
 
 // ============================================================
 // MOCK DATA - Simulates external systems for agentic tools
@@ -377,7 +378,15 @@ app.post('/api/scenario/generate', async (req, res) => {
   try {
     const { role, difficulty } = req.body;
 
-    const prompt = `Generate a new training scenario for a ${role} at ${difficulty} difficulty level.
+    const prompt = `${SYSTEM_PROMPT}
+
+AVAILABLE DATA FOR SCENARIO GENERATION:
+Flight Data: ${JSON.stringify(mockFlightData, null, 2)}
+Inventory Data: ${JSON.stringify(mockInventoryData, null, 2)}
+Demand Signals: ${JSON.stringify(mockDemandSignals, null, 2)}
+Cryo Depots: ${JSON.stringify(mockCryoDepots, null, 2)}
+
+Generate a new training scenario for a ${role} at ${difficulty} difficulty level.
 
 Include:
 1. A compelling "Alert" title (what happened)
@@ -400,60 +409,19 @@ Format your response as JSON:
   "hints": ["hint1", "hint2"] (more hints for beginner, fewer for expert)
 }`;
 
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1500,
-      system: SYSTEM_PROMPT,
-      tools: tools,
-      messages: [{ role: 'user', content: prompt }]
-    });
-
-    // Handle tool use if Claude wants to check data while generating
-    let finalResponse = response;
-    let messages = [{ role: 'user', content: prompt }];
-
-    while (finalResponse.stop_reason === 'tool_use') {
-      const assistantMessage = { role: 'assistant', content: finalResponse.content };
-      messages.push(assistantMessage);
-
-      const toolResults = [];
-      for (const block of finalResponse.content) {
-        if (block.type === 'tool_use') {
-          const result = executeTool(block.name, block.input);
-          toolResults.push({
-            type: 'tool_result',
-            tool_use_id: block.id,
-            content: JSON.stringify(result)
-          });
-        }
-      }
-
-      messages.push({ role: 'user', content: toolResults });
-
-      finalResponse = await anthropic.messages.create({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1500,
-        system: SYSTEM_PROMPT,
-        tools: tools,
-        messages: messages
-      });
-    }
-
-    // Extract text response
-    const textContent = finalResponse.content.find(block => block.type === 'text');
+    const response = await geminiModel.generateContent(prompt);
+    const textContent = response.response.text();
     let scenarioData;
     
     try {
-      // Try to parse JSON from the response
-      const jsonMatch = textContent.text.match(/\{[\s\S]*\}/);
+      const jsonMatch = textContent.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         scenarioData = JSON.parse(jsonMatch[0]);
       } else {
         throw new Error('No JSON found');
       }
     } catch (e) {
-      // If parsing fails, return raw text
-      scenarioData = { raw_response: textContent.text };
+      scenarioData = { raw_response: textContent };
     }
 
     res.json({ success: true, scenario: scenarioData });
@@ -474,60 +442,43 @@ app.post('/api/scenario/respond', async (req, res) => {
       { role: 'user', content: userResponse }
     ];
 
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 2000,
-      system: SYSTEM_PROMPT,
-      tools: tools,
-      messages: messages
-    });
+    // Build conversation string for Gemini
+    const conversationText = messages.map(m => {
+      const role = m.role === 'user' ? 'User' : 'Assistant';
+      const content = typeof m.content === 'string' ? m.content : JSON.stringify(m.content);
+      return `${role}: ${content}`;
+    }).join('\n\n');
 
-    // Handle tool use loop
-    let finalResponse = response;
-    let updatedMessages = [...messages];
+    const prompt = `${SYSTEM_PROMPT}
 
-    while (finalResponse.stop_reason === 'tool_use') {
-      const assistantMessage = { role: 'assistant', content: finalResponse.content };
-      updatedMessages.push(assistantMessage);
+AVAILABLE DATA (use this to inform your responses):
+Flight Data: ${JSON.stringify(mockFlightData, null, 2)}
+Inventory Data: ${JSON.stringify(mockInventoryData, null, 2)}
+Demand Signals: ${JSON.stringify(mockDemandSignals, null, 2)}
+Cryo Depots: ${JSON.stringify(mockCryoDepots, null, 2)}
 
-      const toolResults = [];
-      const toolCalls = [];
+CURRENT SCENARIO:
+${JSON.stringify(scenario, null, 2)}
 
-      for (const block of finalResponse.content) {
-        if (block.type === 'tool_use') {
-          const result = executeTool(block.name, block.input);
-          toolResults.push({
-            type: 'tool_result',
-            tool_use_id: block.id,
-            content: JSON.stringify(result)
-          });
-          toolCalls.push({
-            tool: block.name,
-            input: block.input,
-            result: result
-          });
-        }
-      }
+CONVERSATION SO FAR:
+${conversationText}
 
-      updatedMessages.push({ role: 'user', content: toolResults });
+Continue the simulation. Respond to the user's latest input. Reference the available data when relevant to make your response realistic and specific. Guide them through the scenario, ask probing questions, or provide feedback on their decisions.`;
 
-      finalResponse = await anthropic.messages.create({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 2000,
-        system: SYSTEM_PROMPT,
-        tools: tools,
-        messages: updatedMessages
-      });
-    }
+    const response = await geminiModel.generateContent(prompt);
+    const textContent = response.response.text();
 
-    // Extract final text response
-    const textContent = finalResponse.content.find(block => block.type === 'text');
+    // Update conversation history
+    const updatedMessages = [
+      ...messages,
+      { role: 'assistant', content: textContent }
+    ];
 
     res.json({
       success: true,
-      response: textContent?.text || '',
+      response: textContent,
       conversationHistory: updatedMessages,
-      assistantContent: finalResponse.content
+      assistantContent: [{ type: 'text', text: textContent }]
     });
 
   } catch (error) {
@@ -561,18 +512,15 @@ Provide your assessment as JSON:
       { role: 'user', content: gradingPrompt }
     ];
 
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1500,
-      system: SYSTEM_PROMPT,
-      messages: messages
-    });
-
-    const textContent = response.content.find(block => block.type === 'text');
+    // Combine system prompt with conversation for Gemini
+    const fullPrompt = `${SYSTEM_PROMPT}\n\nConversation:\n${messages.map(m => `${m.role}: ${typeof m.content === 'string' ? m.content : JSON.stringify(m.content)}`).join('\n')}`;
+    
+    const response = await geminiModel.generateContent(fullPrompt);
+    const textContent = response.response.text();
     let gradeData;
 
     try {
-      const jsonMatch = textContent.text.match(/\{[\s\S]*\}/);
+      const jsonMatch = textContent.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         gradeData = JSON.parse(jsonMatch[0]);
       } else {
@@ -692,17 +640,12 @@ Return ONLY valid JSON array:
   }
 ]`;
 
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 8000,
-      messages: [{ role: 'user', content: questionsPrompt }]
-    });
-
-    const textContent = response.content.find(block => block.type === 'text');
+    const response = await geminiModel.generateContent(questionsPrompt);
+    const textContent = response.response.text();
     let questions;
     
     try {
-      const jsonMatch = textContent.text.match(/\[[\s\S]*\]/);
+      const jsonMatch = textContent.match(/\[[\s\S]*\]/);
       if (jsonMatch) {
         questions = JSON.parse(jsonMatch[0]);
       } else {
@@ -809,17 +752,12 @@ Return ONLY valid JSON:
   }
 }`;
 
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 4000,
-      messages: [{ role: 'user', content: gradingPrompt }]
-    });
-
-    const textContent = response.content.find(block => block.type === 'text');
+    const response = await geminiModel.generateContent(gradingPrompt);
+    const textContent = response.response.text();
     let gradeData;
     
     try {
-      const jsonMatch = textContent.text.match(/\{[\s\S]*\}/);
+      const jsonMatch = textContent.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         gradeData = JSON.parse(jsonMatch[0]);
       } else {
@@ -865,15 +803,10 @@ Provide a clear, concise teaching session that:
 
 Keep it conversational and encouraging. Format with markdown.`;
 
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 2000,
-      messages: [{ role: 'user', content: teachPrompt }]
-    });
+    const response = await geminiModel.generateContent(teachPrompt);
+    const textContent = response.response.text();
 
-    const textContent = response.content.find(block => block.type === 'text');
-
-    res.json({ success: true, lesson: textContent.text });
+    res.json({ success: true, lesson: textContent });
 
   } catch (error) {
     console.error('Teaching error:', error);
