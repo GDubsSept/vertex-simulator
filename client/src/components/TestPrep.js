@@ -105,12 +105,13 @@ const TestPrep = ({ onBack }) => {
     }
   };
 
-  const submitTest = async () => {
+  const submitTest = async (finalAnswers) => {
     setStage('loading');
+    const answersToGrade = finalAnswers || answers;
     try {
       const response = await axios.post('/api/test/grade', {
         questions,
-        answers
+        answers: answersToGrade
       });
 
       if (response.data.success) {
@@ -243,12 +244,14 @@ const TestPrep = ({ onBack }) => {
             questionIndex={currentQuestion}
             totalQuestions={questions.length}
             answer={answers[currentQuestion]}
+            answers={answers}
             onAnswer={handleAnswer}
             onNext={nextQuestion}
             onPrev={prevQuestion}
             onSubmit={submitTest}
             isLast={currentQuestion === questions.length - 1}
             allAnswered={answers.every(a => a !== null)}
+            questionStartTime={questionStartTime}
           />
         )}
 
@@ -412,13 +415,15 @@ const TestScreen = ({
   question, 
   questionIndex, 
   totalQuestions,
-  answer, 
+  answer,
+  answers,
   onAnswer, 
   onNext, 
   onPrev, 
   onSubmit,
   isLast,
-  allAnswered
+  allAnswered,
+  questionStartTime
 }) => {
   const [selectedAnswer, setSelectedAnswer] = useState(answer?.answer || '');
   const [confidence, setConfidence] = useState(answer?.confidence || 3);
@@ -432,11 +437,20 @@ const TestScreen = ({
 
   const handleSaveAndNext = () => {
     const answerValue = question.type === 'multiple_choice' ? selectedAnswer : freeTextAnswer;
+    const timeTaken = Math.round((Date.now() - questionStartTime) / 1000);
+    
     if (answerValue) {
       onAnswer(answerValue, confidence);
     }
+    
     if (isLast) {
-      onSubmit();
+      // Build complete answers array including the current answer
+      // This avoids the React state timing issue
+      const finalAnswers = [...answers];
+      finalAnswers[questionIndex] = answerValue 
+        ? { answer: answerValue, confidence, timeTaken } 
+        : answers[questionIndex];
+      onSubmit(finalAnswers);
     } else {
       onNext();
     }

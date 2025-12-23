@@ -187,6 +187,36 @@
       "back": "A platform for containerization. It packages an Agent and its dependencies so it runs identically on a laptop, in the cloud, or on a factory edge device."
     },
     {
+      "id": 32,
+      "category": "Case Study: Peakview",
+      "front": "Describe your Grocery Cold Chain Use Case.",
+      "back": "Problem: Reactive repairs caused 4% food waste. Solution: Deployed IoT Sensors (LoRaWAN) + AI Agent. The Agent detected 'Thermal Anomalies' (Rate of change) via MQTT stream and auto-created work orders."
+    },
+    {
+      "id": 33,
+      "category": "Case Study: Peakview",
+      "front": "Describe the Peakview Risk Architecture.",
+      "back": "Multi-Model AI approach. Backend: Node.js/Express with PostgreSQL (Row Level Security). Dynamic switching between Claude (Reasoning) and Gemini (Fallback)."
+    },
+    {
+      "id": 34,
+      "category": "Case Study: Clean Harbors",
+      "front": "Describe your Oracle Cloud Transformation Use Case.",
+      "back": "Project: End-to-end Oracle SCM Cloud deployment. Key Learning: 'Data Governance' and 'Communication' are vital. Used 'Parallel Run' validation (old vs new system) to earn trust from Finance."
+    },
+    {
+      "id": 35,
+      "category": "Case Study: CVS Health",
+      "front": "Describe your Cost-to-Serve Use Case.",
+      "back": "Project: Total Cost-to-Serve Model. Tech: SQL/Python modeling to combine transportation, holding, and labor costs. Result: $20M savings by optimizing inventory placement."
+    },
+    {
+      "id": 36,
+      "category": "Case Study: Amazon",
+      "front": "Describe your Network Design Use Case.",
+      "back": "Project: Inbound Cross-Dock Network. Tech: Simulation modeling and algorithmic placement. Result: $70M annualized savings."
+    },
+    {
       "id": 37,
       "category": "AI Strategy",
       "front": "What is Human-in-the-Loop (HITL)?",
@@ -569,6 +599,354 @@
       "category": "Data Science",
       "front": "What is 'Synthetic Data'?",
       "back": "Artificially generated data used to train AI when real data is scarce or sensitive (PII). Useful for training Casgevy agents without exposing real patient names."
+    },
+    {
+      "id": 101,
+      "category": "Supply Chain Fundamentals",
+      "front": "What is S&OP (Sales & Operations Planning)?",
+      "back": "A monthly cross-functional process that aligns demand, supply, and financial plans. It brings together Sales, Marketing, Operations, and Finance to create one consensus plan. Critical for balancing inventory investment against service levels."
+    },
+    {
+      "id": 102,
+      "category": "Supply Chain Fundamentals",
+      "front": "What is IBP (Integrated Business Planning)?",
+      "back": "The evolution of S&OP that extends planning horizons to 24-36 months and integrates strategic, financial, and operational planning. IBP connects corporate strategy to execution and typically includes scenario planning capabilities."
+    },
+    {
+      "id": 103,
+      "category": "Supply Chain Fundamentals",
+      "front": "What is ATP (Available to Promise)?",
+      "back": "The uncommitted portion of inventory or planned production that can be promised to customers. ATP calculations help sales teams make reliable delivery commitments without over-promising. Critical for Suzetrigine launch to avoid stockouts."
+    },
+    {
+      "id": 104,
+      "category": "Supply Chain Fundamentals",
+      "front": "Explain the difference between MRP and MPS.",
+      "back": "MPS (Master Production Schedule): High-level plan of WHAT and WHEN to produce finished goods.\nMRP (Material Requirements Planning): Detailed plan of raw materials and components needed to execute the MPS. MRP 'explodes' the BOM (Bill of Materials) to calculate component needs."
+    },
+    {
+      "id": 105,
+      "category": "Supply Chain Fundamentals",
+      "front": "What is the Bullwhip Effect?",
+      "back": "The phenomenon where small demand fluctuations at the retail level amplify into larger swings upstream in the supply chain. Causes: forecast errors, order batching, price fluctuations, rationing. Solution: Information sharing, VMI, collaborative planning."
+    },
+    {
+      "id": 106,
+      "category": "Supply Chain Fundamentals",
+      "front": "What is the SCOR Model?",
+      "back": "Supply Chain Operations Reference model - a standardized framework with 6 processes: Plan, Source, Make, Deliver, Return, Enable. Used for benchmarking, process improvement, and communicating supply chain strategy. Created by APICS/ASCM."
+    },
+    {
+      "id": 107,
+      "category": "Supply Chain Fundamentals",
+      "front": "How is Safety Stock calculated?",
+      "back": "Basic formula: SS = Z × σ × √LT, where Z = service level factor, σ = demand standard deviation, LT = lead time. More sophisticated models account for lead time variability: SS = Z × √(LT×σd² + d²×σLT²). AI can optimize this dynamically."
+    },
+    {
+      "id": 108,
+      "category": "Supply Chain Fundamentals",
+      "front": "Why is Lead Time Variability important?",
+      "back": "Inconsistent lead times force higher safety stock and reduce planning reliability. Sources: supplier delays, customs, transportation, quality holds. In pharma, QC testing time is often the most variable component. AI can predict and flag at-risk shipments."
+    },
+    {
+      "id": 109,
+      "category": "Supply Chain Fundamentals",
+      "front": "What is VMI (Vendor Managed Inventory)?",
+      "back": "Supplier monitors and replenishes customer inventory based on agreed parameters. Benefits: Reduced stockouts, lower customer planning burden, better supplier visibility. Common in pharma distribution. Requires trust and data sharing between parties."
+    },
+    {
+      "id": 110,
+      "category": "Pharma Supply Chain",
+      "front": "What is unique about Clinical Trial Supply Chain?",
+      "back": "Challenges: Small batches, blinding/randomization, global distribution, expiry management, comparator sourcing, patient-level tracking. Requires IRT systems, cold chain, destruction logs. Much higher cost per unit than commercial supply."
+    },
+    {
+      "id": 111,
+      "category": "Pharma Supply Chain",
+      "front": "What is IRT (Interactive Response Technology)?",
+      "back": "Software system used in clinical trials for drug supply management. Functions: randomization, drug assignment, inventory management at sites, resupply triggers, patient tracking. Ensures right patient gets right treatment (critical for blinded studies)."
+    },
+    {
+      "id": 112,
+      "category": "Pharma Supply Chain",
+      "front": "What is GDP (Good Distribution Practice)?",
+      "back": "EU guidelines for proper distribution of medicinal products. Covers: storage conditions, transportation, documentation, returns, recalls, qualification of suppliers/customers. Ensures product integrity from manufacturer to patient."
+    },
+    {
+      "id": 113,
+      "category": "Pharma Supply Chain",
+      "front": "What is a Qualified Person (QP) Release?",
+      "back": "EU requirement: A QP must certify each batch before release to market. The QP verifies GMP compliance, reviews batch records, ensures testing is complete. No QP signature = product cannot be sold in EU. A critical bottleneck for supply planning."
+    },
+    {
+      "id": 114,
+      "category": "Pharma Supply Chain",
+      "front": "What is Temperature Mapping and Stability Studies?",
+      "back": "Temperature Mapping: Documenting temperature distribution in warehouses/trucks to identify hot/cold spots.\nStability Studies: Testing drug under various conditions to establish shelf life and storage requirements. Both required for regulatory compliance."
+    },
+    {
+      "id": 115,
+      "category": "Pharma Supply Chain",
+      "front": "Explain FEFO and Expiry Management.",
+      "back": "FEFO (First Expired, First Out): Inventory policy ensuring shortest-dated product ships first. Critical in pharma to minimize write-offs. Challenges: Returns, multiple SKUs, allocation logic. AI can optimize allocation to minimize expiry across the network."
+    },
+    {
+      "id": 116,
+      "category": "Pharma Supply Chain",
+      "front": "What are the key steps in Pharmaceutical Recall Management?",
+      "back": "1. Classification (Class I/II/III by severity)\n2. Notification (FDA, customers, public if needed)\n3. Serialization data retrieval (DSCSA track & trace)\n4. Physical retrieval and quarantine\n5. Root cause investigation\n6. CAPA implementation\n7. Regulatory closure"
+    },
+    {
+      "id": 117,
+      "category": "Pharma Supply Chain",
+      "front": "What is Comparator Sourcing in clinical trials?",
+      "back": "Obtaining competitor or standard-of-care drugs for use in clinical trial comparisons. Challenges: Sourcing legally, managing different pack sizes/languages, repackaging/blinding, cold chain for biologics, global availability differences."
+    },
+    {
+      "id": 118,
+      "category": "Pharma Supply Chain",
+      "front": "What is Serialization Aggregation in pharma?",
+      "back": "Linking individual unit serial numbers to parent containers (bundle → case → pallet). Enables efficient scanning at each level while maintaining full traceability. Required by DSCSA. Challenge: Maintaining hierarchy through rework and repackaging."
+    },
+    {
+      "id": 119,
+      "category": "AI Agents",
+      "front": "What is Tool Calling / Function Calling in AI agents?",
+      "back": "The ability for an LLM to invoke external functions (APIs, databases, calculators) during generation. The model outputs a structured request (tool name + parameters), the system executes it, and the result is fed back to the model. Enables agents to take real-world actions."
+    },
+    {
+      "id": 120,
+      "category": "AI Agents",
+      "front": "Explain Short-term vs Long-term Memory in AI agents.",
+      "back": "Short-term: Conversation context within the current session (stored in prompt/context window).\nLong-term: Persistent storage across sessions (vector DB, knowledge graphs). Enables agents to 'remember' past interactions, learn preferences, and build knowledge over time."
+    },
+    {
+      "id": 121,
+      "category": "AI Agents",
+      "front": "What is Multi-Agent Orchestration?",
+      "back": "Coordinating multiple specialized agents to solve complex problems. Patterns: Manager/Worker (one agent delegates), Pipeline (sequential handoffs), Debate (agents critique each other). Example: One agent checks inventory, another analyzes demand, a third creates the plan."
+    },
+    {
+      "id": 122,
+      "category": "AI Agents",
+      "front": "What are Agent Guardrails and Supervision?",
+      "back": "Safety mechanisms to constrain agent behavior: Input validation, output filtering, action allowlists, spending limits, human approval gates, anomaly detection. Critical for GxP: Agents should never take irreversible actions without HITL approval."
+    },
+    {
+      "id": 123,
+      "category": "AI Agents",
+      "front": "Compare LangGraph, CrewAI, and AutoGen frameworks.",
+      "back": "LangGraph: Graph-based workflow orchestration, fine-grained control, good for complex state machines.\nCrewAI: Role-based agents with defined goals, simpler setup, good for team simulations.\nAutoGen (Microsoft): Multi-agent conversation framework, strong code execution, research-oriented."
+    },
+    {
+      "id": 124,
+      "category": "AI Agents",
+      "front": "How do you evaluate AI Agent performance?",
+      "back": "Metrics: Task completion rate, accuracy, latency, cost per task, tool call efficiency, error recovery rate. Methods: Benchmarks, A/B testing, human evaluation, trajectory analysis. For GxP: Also audit trail completeness and compliance adherence."
+    },
+    {
+      "id": 125,
+      "category": "AI Agents",
+      "front": "What is Prompt Injection and how do you prevent it?",
+      "back": "Attack where malicious input tricks the AI into ignoring instructions or performing unauthorized actions. Prevention: Input sanitization, instruction hierarchy, output validation, sandboxed execution, monitoring for anomalous behavior. Critical security concern for production agents."
+    },
+    {
+      "id": 126,
+      "category": "AI Agents",
+      "front": "What is Agent Observability and Debugging?",
+      "back": "Tools and practices to understand agent behavior: Logging all prompts/responses, tracing tool calls, visualizing decision paths, replay capabilities. Tools: LangSmith, Phoenix, Weights & Biases. Essential for debugging failures and demonstrating compliance."
+    },
+    {
+      "id": 127,
+      "category": "AI Agents",
+      "front": "What is Retrieval-Augmented Generation with Agents (Agentic RAG)?",
+      "back": "Combining RAG with agentic capabilities. The agent decides WHEN and WHAT to retrieve, can query multiple sources, evaluate results, and iterate. More flexible than static RAG pipelines. Example: Agent searches SOPs, then checks ERP data, then formulates response."
+    },
+    {
+      "id": 128,
+      "category": "AI Agents",
+      "front": "What is the Agent Executor pattern?",
+      "back": "Core loop: 1) Receive input, 2) LLM decides action or final answer, 3) If action: execute tool, observe result, return to step 2, 4) If final answer: return to user. Implemented in LangChain, LlamaIndex. Enables autonomous multi-step reasoning."
+    },
+    {
+      "id": 129,
+      "category": "AI Architecture",
+      "front": "When should you use Fine-tuning vs RAG vs Prompt Engineering?",
+      "back": "Prompt Engineering: First try. Good for behavior/format changes. Cheap, fast.\nRAG: When you need current/proprietary data. Keeps base model knowledge + adds specifics.\nFine-tuning: When you need consistent style/behavior or domain-specific language that prompting can't achieve. Expensive, requires data."
+    },
+    {
+      "id": 130,
+      "category": "AI Architecture",
+      "front": "What are Embeddings and how do they work?",
+      "back": "Dense vector representations of text that capture semantic meaning. Similar concepts have similar vectors (close in vector space). Created by encoder models. Used for: semantic search, clustering, recommendations. Typical dimensions: 384-1536 floats per text chunk."
+    },
+    {
+      "id": 131,
+      "category": "AI Architecture",
+      "front": "What are Chunking Strategies for RAG?",
+      "back": "Methods to split documents for embedding: Fixed-size (simple but breaks context), Sentence-based (natural boundaries), Semantic (by topic), Recursive (hierarchical). Considerations: Chunk size (256-1024 tokens typical), overlap (10-20%), metadata preservation."
+    },
+    {
+      "id": 132,
+      "category": "AI Architecture",
+      "front": "How can you detect and prevent Hallucinations?",
+      "back": "Detection: Citation verification, confidence scoring, fact-checking with retrieval, consistency checks across generations.\nPrevention: RAG grounding, lower temperature, explicit 'I don't know' training, chain-of-thought reasoning, constrained outputs (JSON schemas)."
+    },
+    {
+      "id": 133,
+      "category": "AI Architecture",
+      "front": "What is RLHF (Reinforcement Learning from Human Feedback)?",
+      "back": "Training method to align LLMs with human preferences. Process: 1) Collect human comparisons of outputs, 2) Train reward model on preferences, 3) Fine-tune LLM using PPO to maximize reward. Used by OpenAI/Anthropic to make models helpful, harmless, honest."
+    },
+    {
+      "id": 134,
+      "category": "AI Architecture",
+      "front": "What is the Model Context Protocol (MCP)?",
+      "back": "Anthropic's open standard for connecting AI models to external tools and data sources. Provides a standardized way to: expose tools, share context, handle authentication. Aims to make AI integrations more interoperable across different systems and providers."
+    },
+    {
+      "id": 135,
+      "category": "AI Architecture",
+      "front": "What is Structured Output / JSON Mode in LLMs?",
+      "back": "Constraining LLM output to valid JSON matching a schema. Benefits: Reliable parsing, integration with systems, reduced hallucination in structured fields. Methods: System prompt instructions, function calling, grammar-constrained generation. Critical for agent tool calls."
+    },
+    {
+      "id": 136,
+      "category": "AI Architecture",
+      "front": "What is Semantic Caching for LLM applications?",
+      "back": "Caching LLM responses based on semantic similarity of queries, not exact match. If new query is similar enough to cached query, return cached response. Benefits: Cost reduction, latency improvement. Requires embedding comparison with similarity threshold."
+    },
+    {
+      "id": 137,
+      "category": "AI Use Cases",
+      "front": "How is ML used for Demand Forecasting?",
+      "back": "Beyond traditional time-series: ML incorporates external signals (weather, events, social media), handles intermittent demand, auto-selects best model per SKU. Techniques: Gradient Boosting, LSTMs, Transformers. Key: Feature engineering and forecast accuracy measurement (MAPE, Bias)."
+    },
+    {
+      "id": 138,
+      "category": "AI Use Cases",
+      "front": "How can AI dynamically optimize Safety Stock?",
+      "back": "Traditional: Static SS based on historical variability. AI approach: Real-time adjustment based on demand signals, supplier risk scores, lead time predictions, service level targets. Can run 'what-if' simulations. Result: Lower inventory with same or better service."
+    },
+    {
+      "id": 139,
+      "category": "AI Use Cases",
+      "front": "What algorithms are used for Route Optimization?",
+      "back": "VRP (Vehicle Routing Problem) variants. Methods: Exact (MILP for small problems), Heuristics (Clarke-Wright, Nearest Neighbor), Metaheuristics (Genetic Algorithms, Simulated Annealing), ML (Reinforcement Learning for dynamic routing). Tools: Google OR-Tools, OptaPlanner."
+    },
+    {
+      "id": 140,
+      "category": "AI Use Cases",
+      "front": "How can AI predict Supplier Risk?",
+      "back": "Data sources: Financial filings, news sentiment, weather/geopolitical data, delivery history, quality metrics, ESG scores. Models: Classification (high/medium/low risk), regression (probability of disruption), NLP for news monitoring. Enables proactive mitigation."
+    },
+    {
+      "id": 141,
+      "category": "AI Use Cases",
+      "front": "How is NLP used for Contract Analysis?",
+      "back": "Applications: Extracting key terms (pricing, SLAs, penalties), comparing against templates, identifying risky clauses, tracking obligations. Techniques: Named Entity Recognition, clause classification, semantic similarity. Saves legal review time and ensures compliance."
+    },
+    {
+      "id": 142,
+      "category": "AI Use Cases",
+      "front": "What is Automated Exception Management?",
+      "back": "Using AI to handle supply chain alerts: Classify severity, suggest resolution, auto-execute low-risk actions, escalate appropriately. Reduces planner workload from 'fighting fires' to strategic work. Example: Auto-reroute shipment when flight delayed."
+    },
+    {
+      "id": 143,
+      "category": "AI Use Cases",
+      "front": "How can AI predict Lead Times?",
+      "back": "Inputs: Supplier, origin, carrier, current transit data, port congestion, weather, historical performance. Output: Probabilistic delivery window. Benefits: Better promise dates, proactive alerts, dynamic safety stock. ML models outperform static lead times by 30-40%."
+    },
+    {
+      "id": 144,
+      "category": "AI Use Cases",
+      "front": "How can AI assist with Batch Record Review?",
+      "back": "Traditional: Manual review of 100+ pages per batch. AI approach: Extract key parameters, flag deviations, compare against specifications, identify trends across batches. Reduces review time 50-70% while improving consistency. Still requires QA sign-off (HITL)."
+    },
+    {
+      "id": 145,
+      "category": "AI Use Cases",
+      "front": "What is Cognitive Document Processing in pharma?",
+      "back": "Using AI to extract, classify, and process unstructured documents. Applications: Regulatory submissions, CMC documents, SOPs, supplier certificates. Combines OCR, NLP, and ML. Enables searchable knowledge bases and automated compliance checks."
+    },
+    {
+      "id": 146,
+      "category": "Vertex Business",
+      "front": "Describe the Vertex-CRISPR Therapeutics partnership for Casgevy.",
+      "back": "Joint development and commercialization of Casgevy (exa-cel) for sickle cell disease and transfusion-dependent beta thalassemia. Vertex leads commercial manufacturing and North American commercialization. CRISPR leads EU commercialization. Profit sharing: 60% Vertex / 40% CRISPR."
+    },
+    {
+      "id": 147,
+      "category": "Vertex Business",
+      "front": "What was Vertex's acquisition of Alpine Immune Sciences?",
+      "back": "Acquired in 2024 for ~$4.9B. Alpine's lead asset: Povetacicept for IgA nephropathy (kidney disease). Strategic fit: Expands Vertex's kidney disease portfolio alongside VX-147 (inaxaplin). Demonstrates Vertex's M&A strategy to build beyond CF."
+    },
+    {
+      "id": 148,
+      "category": "Vertex Business",
+      "front": "Where are Vertex's key manufacturing sites?",
+      "back": "Boston Seaport (MA): Headquarters + Continuous Manufacturing for CF drugs.\nProvidence (RI): Small molecule manufacturing.\nCDMOs: Partner with Lonza and others for cell therapy manufacturing.\nOxford (UK): Research facility."
+    },
+    {
+      "id": 149,
+      "category": "Vertex Business",
+      "front": "What is Vertex's pipeline beyond CF, Pain, and Cell Therapy?",
+      "back": "Kidney: VX-147 (inaxaplin) for APOL1-mediated kidney disease, Povetacicept for IgA nephropathy.\nType 1 Diabetes: VX-880 (stem cell-derived islets).\nDuchenne Muscular Dystrophy: Gene editing program.\nLiver diseases: Multiple early-stage programs."
+    },
+    {
+      "id": 150,
+      "category": "Vertex Business",
+      "front": "What is the Vertex Innovation Site in Boston Seaport?",
+      "back": "Vertex's headquarters and integrated R&D/manufacturing campus at Fan Pier, Boston. Features: Open lab design, continuous manufacturing suite, collaboration spaces. Symbolizes Vertex's 'bench to bedside' approach - research and production under one roof."
+    },
+    {
+      "id": 151,
+      "category": "Emerging Tech",
+      "front": "What is the EU Digital Product Passport (DPP)?",
+      "back": "Upcoming EU regulation requiring products to have digital records of composition, origin, repairability, and sustainability. Pharma implications: Enhanced serialization, supply chain transparency, ESG reporting. Uses QR codes linked to databases. Expected 2026-2030 rollout."
+    },
+    {
+      "id": 152,
+      "category": "Emerging Tech",
+      "front": "How is Blockchain used in Pharma Traceability?",
+      "back": "Provides immutable, shared ledger for tracking drug movements. Benefits: Counterfeit prevention, instant recalls, DSCSA compliance. Challenges: Scalability, industry adoption, integration with legacy systems. Use cases: Vaccine tracking, controlled substance monitoring."
+    },
+    {
+      "id": 153,
+      "category": "Emerging Tech",
+      "front": "What is IIoT (Industrial Internet of Things) in pharma manufacturing?",
+      "back": "Network of sensors and connected devices on the production floor. Applications: Real-time equipment monitoring, environmental controls (temperature/humidity), predictive maintenance, automated data collection for batch records. Enables Industry 4.0 and PAT integration."
+    },
+    {
+      "id": 154,
+      "category": "Emerging Tech",
+      "front": "How is Computer Vision used for Quality Inspection?",
+      "back": "AI-powered visual inspection of tablets, vials, packaging. Detects: Cracks, discoloration, fill level, label defects, foreign particles. Benefits: Faster than human inspection, consistent, 24/7 operation. Requires validation as a GxP system. Reduces false rejects."
+    },
+    {
+      "id": 155,
+      "category": "Emerging Tech",
+      "front": "What are EU MDR and IVDR regulations?",
+      "back": "Medical Device Regulation (MDR) and In Vitro Diagnostic Regulation (IVDR) - stricter EU requirements replacing older directives. Impact on pharma: Combination products (drug + device), companion diagnostics, increased clinical evidence requirements, UDI (Unique Device Identification)."
+    },
+    {
+      "id": 156,
+      "category": "Regulatory",
+      "front": "What is ICH Q12?",
+      "back": "ICH guideline on Technical and Regulatory Considerations for Pharmaceutical Product Lifecycle Management. Enables post-approval changes with less regulatory burden through established conditions and change protocols. Supports continuous improvement and manufacturing innovation."
+    },
+    {
+      "id": 157,
+      "category": "Regulatory",
+      "front": "What is Annex 1 and why is it significant?",
+      "back": "EU GMP Annex 1: Manufacture of Sterile Medicinal Products. Updated in 2022 with stricter requirements for contamination control, environmental monitoring, and personnel training. Impacts all sterile manufacturing including many biologics and CGT products."
+    },
+    {
+      "id": 158,
+      "category": "Operations",
+      "front": "What is OEE (Overall Equipment Effectiveness)?",
+      "back": "Key manufacturing metric: OEE = Availability × Performance × Quality. Availability: Actual runtime vs planned. Performance: Actual speed vs designed. Quality: Good units vs total. World-class OEE > 85%. AI can identify OEE improvement opportunities from sensor data."
     }
   ]
 }
