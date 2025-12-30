@@ -4,10 +4,11 @@ import {
   GraduationCap, 
   ChevronRight,
   Zap,
-  Target
+  Target,
+  BookOpen
 } from 'lucide-react';
 
-const HomePage = ({ onSelectSimulation, onSelectTestPrep }) => {
+const HomePage = ({ onSelectSimulation, onSelectTestPrep, onSelectFlashcards }) => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
@@ -31,7 +32,7 @@ const HomePage = ({ onSelectSimulation, onSelectTestPrep }) => {
 
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center p-6">
-        <div className="max-w-4xl w-full">
+        <div className="max-w-5xl w-full">
           {/* Hero */}
           <div className="text-center mb-12">
             <h2 className="text-4xl lg:text-5xl font-display font-bold text-neutral-100 mb-4">
@@ -44,40 +45,36 @@ const HomePage = ({ onSelectSimulation, onSelectTestPrep }) => {
             </p>
           </div>
 
-          {/* Two Options */}
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Simulation Card */}
+          {/* Three Options */}
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Flashcard Study Card */}
             <button
-              onClick={onSelectSimulation}
-              className="group relative p-8 rounded-2xl border-2 border-neutral-800 bg-neutral-900/50 
+              onClick={onSelectFlashcards}
+              className="group relative p-6 rounded-2xl border-2 border-neutral-800 bg-neutral-900/50 
                 hover:border-vertex-500 hover:bg-vertex-500/5 transition-all duration-300 text-left"
             >
               <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
                 <ChevronRight className="w-6 h-6 text-vertex-400" />
               </div>
               
-              <div className="w-14 h-14 rounded-xl bg-vertex-500/20 flex items-center justify-center mb-6">
-                <Plane className="w-7 h-7 text-vertex-400" />
+              <div className="w-12 h-12 rounded-xl bg-vertex-500/20 flex items-center justify-center mb-4">
+                <BookOpen className="w-6 h-6 text-vertex-400" />
               </div>
               
-              <h3 className="text-2xl font-display font-bold text-neutral-100 mb-2">
-                Scenario Training
+              <h3 className="text-xl font-display font-bold text-neutral-100 mb-2">
+                Study Flashcards
               </h3>
               
-              <p className="text-neutral-400 mb-6">
-                Experience realistic supply chain crisis scenarios. Make decisions under pressure 
-                and get AI feedback on your responses.
+              <p className="text-neutral-400 text-sm mb-4">
+                Review key concepts with interactive flashcards. Filter by category and track your progress.
               </p>
               
               <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 bg-neutral-800 rounded-full text-xs text-neutral-400">
-                  Role-Playing
+                <span className="px-2 py-1 bg-neutral-800 rounded-full text-xs text-neutral-400">
+                  158 Cards
                 </span>
-                <span className="px-3 py-1 bg-neutral-800 rounded-full text-xs text-neutral-400">
-                  Crisis Management
-                </span>
-                <span className="px-3 py-1 bg-neutral-800 rounded-full text-xs text-neutral-400">
-                  Real-time Feedback
+                <span className="px-2 py-1 bg-neutral-800 rounded-full text-xs text-neutral-400">
+                  Self-Paced
                 </span>
               </div>
             </button>
@@ -85,35 +82,63 @@ const HomePage = ({ onSelectSimulation, onSelectTestPrep }) => {
             {/* Test Prep Card */}
             <button
               onClick={onSelectTestPrep}
-              className="group relative p-8 rounded-2xl border-2 border-neutral-800 bg-neutral-900/50 
+              className="group relative p-6 rounded-2xl border-2 border-neutral-800 bg-neutral-900/50 
                 hover:border-vertex-500 hover:bg-vertex-500/5 transition-all duration-300 text-left"
             >
               <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
                 <ChevronRight className="w-6 h-6 text-vertex-400" />
               </div>
               
-              <div className="w-14 h-14 rounded-xl bg-vertex-500/20 flex items-center justify-center mb-6">
-                <GraduationCap className="w-7 h-7 text-vertex-400" />
+              <div className="w-12 h-12 rounded-xl bg-vertex-500/20 flex items-center justify-center mb-4">
+                <GraduationCap className="w-6 h-6 text-vertex-400" />
               </div>
               
-              <h3 className="text-2xl font-display font-bold text-neutral-100 mb-2">
+              <h3 className="text-xl font-display font-bold text-neutral-100 mb-2">
                 Knowledge Test
               </h3>
               
-              <p className="text-neutral-400 mb-6">
-                Adaptive testing on AI, supply chain, and Vertex concepts. 
-                Identifies weak areas and creates personalized study plans.
+              <p className="text-neutral-400 text-sm mb-4">
+                Adaptive testing with AI grading. Identifies weak areas and creates personalized study plans.
               </p>
               
               <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 bg-neutral-800 rounded-full text-xs text-neutral-400">
-                  Adaptive Learning
-                </span>
-                <span className="px-3 py-1 bg-neutral-800 rounded-full text-xs text-neutral-400">
-                  80 Topics
-                </span>
-                <span className="px-3 py-1 bg-neutral-800 rounded-full text-xs text-neutral-400">
+                <span className="px-2 py-1 bg-neutral-800 rounded-full text-xs text-neutral-400">
                   AI Grading
+                </span>
+                <span className="px-2 py-1 bg-neutral-800 rounded-full text-xs text-neutral-400">
+                  Adaptive
+                </span>
+              </div>
+            </button>
+
+            {/* Simulation Card */}
+            <button
+              onClick={onSelectSimulation}
+              className="group relative p-6 rounded-2xl border-2 border-neutral-800 bg-neutral-900/50 
+                hover:border-vertex-500 hover:bg-vertex-500/5 transition-all duration-300 text-left"
+            >
+              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                <ChevronRight className="w-6 h-6 text-vertex-400" />
+              </div>
+              
+              <div className="w-12 h-12 rounded-xl bg-vertex-500/20 flex items-center justify-center mb-4">
+                <Plane className="w-6 h-6 text-vertex-400" />
+              </div>
+              
+              <h3 className="text-xl font-display font-bold text-neutral-100 mb-2">
+                Scenario Training
+              </h3>
+              
+              <p className="text-neutral-400 text-sm mb-4">
+                Experience realistic supply chain crisis scenarios. Make decisions under pressure with AI feedback.
+              </p>
+              
+              <div className="flex flex-wrap gap-2">
+                <span className="px-2 py-1 bg-neutral-800 rounded-full text-xs text-neutral-400">
+                  Role-Playing
+                </span>
+                <span className="px-2 py-1 bg-neutral-800 rounded-full text-xs text-neutral-400">
+                  Real-time
                 </span>
               </div>
             </button>

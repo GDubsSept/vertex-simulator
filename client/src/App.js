@@ -3,6 +3,7 @@ import LandingPage from './components/LandingPage';
 import SimulationInterface from './components/SimulationInterface';
 import HomePage from './components/HomePage';
 import TestPrep from './components/TestPrep';
+import FlashcardStudy from './components/FlashcardStudy';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('home'); // home | simulation-landing | simulation | test-prep | completed
@@ -41,6 +42,7 @@ const App = () => {
         <HomePage 
           onSelectSimulation={() => setCurrentPage('simulation-landing')}
           onSelectTestPrep={() => setCurrentPage('test-prep')}
+          onSelectFlashcards={() => setCurrentPage('flashcards')}
         />
       )}
 
@@ -71,6 +73,10 @@ const App = () => {
 
       {currentPage === 'test-prep' && (
         <TestPrep onBack={handleGoHome} />
+      )}
+
+      {currentPage === 'flashcards' && (
+        <FlashcardStudy onBack={handleGoHome} />
       )}
     </div>
   );
