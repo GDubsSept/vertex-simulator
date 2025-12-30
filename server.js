@@ -380,19 +380,26 @@ app.post('/api/scenario/generate', async (req, res) => {
 
     const prompt = `${SYSTEM_PROMPT}
 
-AVAILABLE DATA FOR SCENARIO GENERATION:
-Flight Data: ${JSON.stringify(mockFlightData, null, 2)}
-Inventory Data: ${JSON.stringify(mockInventoryData, null, 2)}
-Demand Signals: ${JSON.stringify(mockDemandSignals, null, 2)}
-Cryo Depots: ${JSON.stringify(mockCryoDepots, null, 2)}
+REFERENCE DATA (use as templates, but create scenario-specific versions):
+Sample Flight Data: ${JSON.stringify(mockFlightData, null, 2)}
+Sample Inventory Data: ${JSON.stringify(mockInventoryData, null, 2)}
+Sample Demand Signals: ${JSON.stringify(mockDemandSignals, null, 2)}
+Cryo Depot Locations: ${JSON.stringify(mockCryoDepots, null, 2)}
 
 Generate a new training scenario for a ${role} at ${difficulty} difficulty level.
+
+CRITICAL: You must generate SCENARIO-SPECIFIC data that directly relates to your scenario. Do not use generic data.
 
 Include:
 1. A compelling "Alert" title (what happened)
 2. Initial situation briefing (3-4 sentences)
 3. Key data points the trainee should investigate
 4. A hidden "ideal response" checklist for grading (do not reveal to user)
+5. SCENARIO-SPECIFIC DATA that will be displayed in the data panel:
+   - flights: Only flights relevant to this scenario with accurate statuses
+   - inventory: Only locations relevant to this scenario
+   - demand: Only regions relevant to this scenario
+   - cryo_expiry_minutes: If CGT scenario, how many minutes until cryo expires (use realistic 60-240 range)
 
 Format your response as JSON:
 {
@@ -406,8 +413,43 @@ Format your response as JSON:
     "key_metrics": {}
   },
   "ideal_response_checklist": ["item1", "item2", ...],
-  "hints": ["hint1", "hint2"] (more hints for beginner, fewer for expert)
-}`;
+  "hints": ["hint1", "hint2"] (more hints for beginner, fewer for expert),
+  "scenario_data": {
+    "flights": {
+      "FLIGHT-ID": {
+        "status": "GROUNDED|DELAYED|IN_TRANSIT|DIVERTED",
+        "location": "Current location",
+        "destination": "Destination",
+        "cargo": "What's being transported",
+        "delay_reason": "If delayed/grounded, why",
+        "patient_id": "If CGT, patient ID",
+        "cryo_expiry": null
+      }
+    },
+    "inventory": {
+      "LOCATION-ID": {
+        "location": "Full location name",
+        "trikafta_units": 0,
+        "suzetrigine_units": 0,
+        "cryo_capacity": 0,
+        "cryo_available": 0
+      }
+    },
+    "demand": {
+      "REGION": {
+        "region": "Region name",
+        "suzetrigine_7day_forecast": 0,
+        "suzetrigine_current_inventory": 0,
+        "stockout_risk": "HIGH|MEDIUM|LOW",
+        "trending_states": []
+      }
+    },
+    "cryo_expiry_minutes": null,
+    "cryo_depots": []
+  }
+}
+
+IMPORTANT: The scenario_data must be consistent with your briefing. If you mention a flight is grounded in Chicago, the flights data must show that exact flight grounded in Chicago. All numbers, locations, and statuses must match.`;
 
     const response = await geminiModel.generateContent(prompt);
     const textContent = response.response.text();
@@ -417,10 +459,26 @@ Format your response as JSON:
       const jsonMatch = textContent.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         scenarioData = JSON.parse(jsonMatch[0]);
+        
+        // If cryo_expiry_minutes is set, calculate actual expiry time
+        if (scenarioData.scenario_data?.cryo_expiry_minutes) {
+          const expiryTime = new Date(Date.now() + scenarioData.scenario_data.cryo_expiry_minutes * 60 * 1000).toISOString();
+          // Add expiry to relevant flight
+          if (scenarioData.scenario_data.flights) {
+            Object.keys(scenarioData.scenario_data.flights).forEach(flightId => {
+              const flight = scenarioData.scenario_data.flights[flightId];
+              if (flight.patient_id || flight.cargo?.toLowerCase().includes('cell') || flight.cargo?.toLowerCase().includes('casgevy')) {
+                flight.cryo_expiry = expiryTime;
+              }
+            });
+          }
+          scenarioData.scenario_data.cryo_expiry_time = expiryTime;
+        }
       } else {
         throw new Error('No JSON found');
       }
     } catch (e) {
+      console.error('Failed to parse scenario:', e);
       scenarioData = { raw_response: textContent };
     }
 

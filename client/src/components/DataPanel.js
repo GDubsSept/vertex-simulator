@@ -25,14 +25,36 @@ const DataPanel = ({ role, scenario, dataOverrides, cryoStatus }) => {
   const [flightData, setFlightData] = useState(null);
   const [inventoryData, setInventoryData] = useState(null);
   const [demandData, setDemandData] = useState(null);
+  const [cryoExpiryTime, setCryoExpiryTime] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
 
+  // Initialize data from scenario
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (scenario?.scenario_data) {
+      const sd = scenario.scenario_data;
+      
+      if (sd.flights) {
+        setFlightData(sd.flights);
+      }
+      if (sd.inventory) {
+        setInventoryData(sd.inventory);
+      }
+      if (sd.demand) {
+        setDemandData(sd.demand);
+      }
+      if (sd.cryo_expiry_time) {
+        setCryoExpiryTime(sd.cryo_expiry_time);
+      }
+      
+      setLoading(false);
+    } else {
+      // Fallback to API if no scenario data
+      fetchData();
+    }
+  }, [scenario]);
 
-  // Apply data overrides when they change
+  // Apply data overrides when they change (for dynamic updates during scenario)
   useEffect(() => {
     if (dataOverrides) {
       if (dataOverrides.flights) {
@@ -66,22 +88,10 @@ const DataPanel = ({ role, scenario, dataOverrides, cryoStatus }) => {
     }
   };
 
-  // Store cryo expiry time (set once, not on every render)
-  const [cryoExpiryTime, setCryoExpiryTime] = useState(null);
-
   // Find CGT flight with cryo expiry for countdown
   const cryoFlight = flightData ? Object.entries(flightData).find(
-    ([id, data]) => data.cryo_expiry && data.cargo?.includes('Patient cells')
+    ([id, data]) => data.cryo_expiry || data.patient_id || data.cargo?.toLowerCase().includes('cell') || data.cargo?.toLowerCase().includes('casgevy')
   ) : null;
-
-  // Set expiry time once when cryo flight is detected
-  useEffect(() => {
-    if (cryoFlight && !cryoExpiryTime) {
-      // Set expiry to 2 hours from now for dramatic effect
-      const expiry = new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
-      setCryoExpiryTime(expiry);
-    }
-  }, [cryoFlight, cryoExpiryTime]);
 
   const tabs = [
     { id: 'overview', label: 'Overview' },
