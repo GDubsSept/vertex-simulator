@@ -296,11 +296,14 @@ const SimulationInterface = ({ role, difficulty, useRealTimeData, onComplete, on
               {/* Mobile Data Toggle */}
               <button
                 onClick={() => setShowMobileData(!showMobileData)}
-                className="lg:hidden flex items-center gap-1 px-2 py-1.5 text-neutral-400 hover:text-neutral-100 
-                  hover:bg-neutral-800 rounded-lg transition-colors text-xs"
+                className={`lg:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all text-xs font-medium
+                  ${showMobileData 
+                    ? 'bg-vertex-600 text-white' 
+                    : 'bg-vertex-500/20 text-vertex-400 border border-vertex-500/50 animate-pulse hover:bg-vertex-500/30'
+                  }`}
               >
                 <Activity className="w-4 h-4" />
-                Data
+                Live Data
               </button>
 
               {/* Exit Button */}
