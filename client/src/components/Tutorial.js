@@ -187,7 +187,7 @@ const Tutorial = ({ onClose }) => {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-neutral-500">Questions</span>
-                <p className="text-neutral-100 font-mono">20 per session</p>
+                <p className="text-neutral-100 font-mono">20, 40, or 60</p>
               </div>
               <div>
                 <span className="text-neutral-500">Question Types</span>
@@ -224,7 +224,7 @@ const Tutorial = ({ onClose }) => {
             />
             <FeatureItem
               title="Detailed Feedback"
-              description="Every answer gets thorough explanation, not just 'correct' or 'wrong'"
+              description="Wrong answers receive thorough explanations to help you learn from mistakes"
             />
             <FeatureItem
               title="Category Breakdown"
