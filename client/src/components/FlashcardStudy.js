@@ -42,11 +42,12 @@ const FlashcardStudy = ({ onBack }) => {
     try {
       const response = await axios.get('/api/flashcards');
       if (response.data.success) {
-        setFlashcards(response.data.flashcards);
-        setFilteredCards(response.data.flashcards);
+        const cards = response.data.data || response.data.flashcards || [];
+        setFlashcards(cards);
+        setFilteredCards(cards);
         
         // Extract unique categories
-        const cats = [...new Set(response.data.flashcards.map(f => f.category))];
+        const cats = [...new Set(cards.map(f => f.category))];
         setCategories(cats.sort());
       }
     } catch (err) {
