@@ -66,21 +66,22 @@ const DataPanel = ({ role, scenario, dataOverrides, cryoStatus }) => {
     }
   };
 
+  // Store cryo expiry time (set once, not on every render)
+  const [cryoExpiryTime, setCryoExpiryTime] = useState(null);
+
   // Find CGT flight with cryo expiry for countdown
   const cryoFlight = flightData ? Object.entries(flightData).find(
     ([id, data]) => data.cryo_expiry && data.cargo?.includes('Patient cells')
   ) : null;
 
-  // Calculate a dynamic expiry time (scenario start + 3 hours)
-  const getCryoExpiryTime = () => {
-    if (cryoFlight && cryoFlight[1].cryo_expiry) {
-      // Use current time + remaining time for demo purposes
-      const now = new Date();
+  // Set expiry time once when cryo flight is detected
+  useEffect(() => {
+    if (cryoFlight && !cryoExpiryTime) {
       // Set expiry to 2 hours from now for dramatic effect
-      return new Date(now.getTime() + 2 * 60 * 60 * 1000).toISOString();
+      const expiry = new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
+      setCryoExpiryTime(expiry);
     }
-    return null;
-  };
+  }, [cryoFlight, cryoExpiryTime]);
 
   const tabs = [
     { id: 'overview', label: 'Overview' },
@@ -156,9 +157,9 @@ const DataPanel = ({ role, scenario, dataOverrides, cryoStatus }) => {
         {activeTab === 'overview' && (
           <div className="space-y-4">
             {/* Cryo Countdown - Show for CGT scenarios */}
-            {cryoFlight && (
+            {cryoFlight && cryoExpiryTime && (
               <CryoCountdown
-                expiryTime={getCryoExpiryTime()}
+                expiryTime={cryoExpiryTime}
                 patientId={cryoFlight[1].patient_id}
                 status={cryoStatus || 'active'}
               />
