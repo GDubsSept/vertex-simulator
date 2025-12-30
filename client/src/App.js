@@ -9,11 +9,13 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState('home'); // home | simulation-landing | simulation | test-prep | completed
   const [selectedRole, setSelectedRole] = useState(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState(null);
+  const [useRealTimeData, setUseRealTimeData] = useState(false);
   const [grade, setGrade] = useState(null);
 
-  const handleStartSimulation = (role, difficulty) => {
+  const handleStartSimulation = (role, difficulty, realTimeData) => {
     setSelectedRole(role);
     setSelectedDifficulty(difficulty);
+    setUseRealTimeData(realTimeData);
     setCurrentPage('simulation');
   };
 
@@ -57,6 +59,7 @@ const App = () => {
         <SimulationInterface
           role={selectedRole}
           difficulty={selectedDifficulty}
+          useRealTimeData={useRealTimeData}
           onComplete={handleSimulationComplete}
           onExit={handleRestart}
         />

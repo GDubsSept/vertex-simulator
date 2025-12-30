@@ -8,12 +8,15 @@ import {
   Target,
   Shield,
   Clock,
-  ArrowLeft
+  ArrowLeft,
+  Globe,
+  Sparkles
 } from 'lucide-react';
 
 const LandingPage = ({ onStartSimulation, onBack }) => {
   const [selectedRole, setSelectedRole] = useState(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState(null);
+  const [useRealTimeData, setUseRealTimeData] = useState(false);
 
   const roles = [
     {
@@ -62,7 +65,7 @@ const LandingPage = ({ onStartSimulation, onBack }) => {
 
   const handleStart = () => {
     if (selectedRole && selectedDifficulty) {
-      onStartSimulation(selectedRole, selectedDifficulty);
+      onStartSimulation(selectedRole, selectedDifficulty, useRealTimeData);
     }
   };
 
@@ -219,6 +222,47 @@ const LandingPage = ({ onStartSimulation, onBack }) => {
               );
             })}
           </div>
+        </div>
+
+        {/* Real-Time Data Toggle */}
+        <div className="mb-12">
+          <h3 className="text-sm font-mono text-neutral-500 uppercase tracking-wider mb-4">
+            Step 3: Data Source (Optional)
+          </h3>
+          <button
+            onClick={() => setUseRealTimeData(!useRealTimeData)}
+            className={`w-full md:w-auto p-5 rounded-xl border-2 transition-all duration-300 text-left
+              ${useRealTimeData 
+                ? 'border-vertex-500 bg-vertex-500/10' 
+                : 'border-neutral-800 bg-neutral-900/50 hover:border-neutral-700'
+              }`}
+          >
+            <div className="flex items-center gap-4">
+              <div className={`w-12 h-12 rounded-lg flex items-center justify-center
+                ${useRealTimeData ? 'bg-vertex-500 text-white' : 'bg-neutral-800 text-neutral-400'}`}>
+                <Globe className="w-6 h-6" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <h4 className="text-lg font-semibold text-neutral-100">
+                    Real-Time Data
+                  </h4>
+                  <Sparkles className={`w-4 h-4 ${useRealTimeData ? 'text-vertex-400' : 'text-neutral-600'}`} />
+                  {useRealTimeData && (
+                    <span className="px-2 py-0.5 bg-vertex-500/20 text-vertex-400 text-xs font-mono rounded">
+                      ENABLED
+                    </span>
+                  )}
+                </div>
+                <p className="text-neutral-400 text-sm">
+                  AI agent searches for current weather conditions and recent pharma news to create scenarios grounded in real-world events.
+                </p>
+              </div>
+              <div className={`w-12 h-7 rounded-full p-1 transition-colors ${useRealTimeData ? 'bg-vertex-500' : 'bg-neutral-700'}`}>
+                <div className={`w-5 h-5 rounded-full bg-white transition-transform ${useRealTimeData ? 'translate-x-5' : 'translate-x-0'}`} />
+              </div>
+            </div>
+          </button>
         </div>
 
         {/* Start Button */}

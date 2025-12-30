@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const axios = require('axios');
 const Anthropic = require('@anthropic-ai/sdk');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 require('dotenv').config();
@@ -509,6 +510,238 @@ const mockCryoDepots = [
 ];
 
 // ============================================================
+// REAL-TIME DATA TOOLS - For Agentic Scenario Generation
+// ============================================================
+
+// City coordinates for weather lookups
+const cityCoordinates = {
+  'boston': { lat: 42.36, lon: -71.06 },
+  'chicago': { lat: 41.88, lon: -87.63 },
+  'atlanta': { lat: 33.75, lon: -84.39 },
+  'dallas': { lat: 32.78, lon: -96.80 },
+  'denver': { lat: 39.74, lon: -104.99 },
+  'los angeles': { lat: 34.05, lon: -118.24 },
+  'san francisco': { lat: 37.77, lon: -122.42 },
+  'memphis': { lat: 35.15, lon: -90.05 },
+  'miami': { lat: 25.76, lon: -80.19 },
+  'seattle': { lat: 47.61, lon: -122.33 },
+  'phoenix': { lat: 33.45, lon: -112.07 },
+  'minneapolis': { lat: 44.98, lon: -93.27 },
+  'detroit': { lat: 42.33, lon: -83.05 },
+  'new york': { lat: 40.71, lon: -74.01 },
+  'philadelphia': { lat: 39.95, lon: -75.17 },
+  'indianapolis': { lat: 39.77, lon: -86.16 },
+  'milwaukee': { lat: 43.04, lon: -87.91 },
+  'cincinnati': { lat: 39.10, lon: -84.51 }
+};
+
+// Get weather data from OpenWeatherMap
+async function getWeather(city) {
+  try {
+    const cityLower = city.toLowerCase();
+    const coords = cityCoordinates[cityLower];
+    
+    if (!coords) {
+      return { success: false, error: `City "${city}" not found in database` };
+    }
+
+    const apiKey = process.env.OPENWEATHER_API_KEY;
+    if (!apiKey) {
+      return { success: false, error: 'OpenWeatherMap API key not configured' };
+    }
+
+    const response = await axios.get(
+      `https://api.openweathermap.org/data/2.5/weather?lat=${coords.lat}&lon=${coords.lon}&appid=${apiKey}&units=imperial`
+    );
+
+    const data = response.data;
+    return {
+      success: true,
+      data: {
+        city: city,
+        temperature_f: Math.round(data.main.temp),
+        feels_like_f: Math.round(data.main.feels_like),
+        conditions: data.weather[0].description,
+        wind_mph: Math.round(data.wind.speed),
+        humidity: data.main.humidity,
+        visibility_miles: Math.round((data.visibility || 10000) / 1609),
+        alerts: data.weather[0].main === 'Thunderstorm' || 
+                data.weather[0].main === 'Snow' || 
+                data.wind.speed > 30 ? 
+                `WEATHER ALERT: ${data.weather[0].description}` : null
+      }
+    };
+  } catch (error) {
+    console.error('Weather API error:', error.message);
+    return { success: false, error: error.message };
+  }
+}
+
+// Search news using Perplexity
+async function searchNews(query) {
+  try {
+    const apiKey = process.env.PERPLEXITY_API_KEY;
+    if (!apiKey) {
+      return { success: false, error: 'Perplexity API key not configured' };
+    }
+
+    const response = await axios.post(
+      'https://api.perplexity.ai/chat/completions',
+      {
+        model: 'sonar',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a research assistant. Provide concise, factual summaries of recent news. Focus on the last 7 days. Include specific dates, numbers, and names when available. Keep response under 300 words.'
+          },
+          {
+            role: 'user',
+            content: `Find recent news about: ${query}. Focus on events from the last week that could impact pharmaceutical supply chains, logistics, or healthcare operations.`
+          }
+        ],
+        max_tokens: 500,
+        temperature: 0.1
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    return {
+      success: true,
+      data: {
+        query: query,
+        summary: response.data.choices[0].message.content,
+        searched_at: new Date().toISOString()
+      }
+    };
+  } catch (error) {
+    console.error('Perplexity API error:', error.message);
+    return { success: false, error: error.message };
+  }
+}
+
+// Execute real-time tool calls
+async function executeRealTimeTool(toolName, args) {
+  switch (toolName) {
+    case 'get_weather':
+      return await getWeather(args.city);
+    case 'search_news':
+      return await searchNews(args.query);
+    default:
+      return { success: false, error: `Unknown tool: ${toolName}` };
+  }
+}
+
+// Gemini tool definitions for real-time data
+const realTimeTools = [
+  {
+    name: 'get_weather',
+    description: 'Get current weather conditions for a US city. Use this to create realistic weather-based scenarios. Returns temperature, conditions, wind, and any active weather alerts.',
+    parameters: {
+      type: 'object',
+      properties: {
+        city: {
+          type: 'string',
+          description: 'City name (e.g., "Chicago", "Boston", "Denver")'
+        }
+      },
+      required: ['city']
+    }
+  },
+  {
+    name: 'search_news',
+    description: 'Search for recent news on a topic. Use this to find current events that could impact the scenario, such as supply chain disruptions, weather events, regulatory changes, or pharma industry news.',
+    parameters: {
+      type: 'object',
+      properties: {
+        query: {
+          type: 'string',
+          description: 'Search query (e.g., "pharmaceutical supply chain disruptions", "Vertex Pharmaceuticals news", "airport delays weather")'
+        }
+      },
+      required: ['query']
+    }
+  }
+];
+
+// Agent loop for real-time data gathering
+async function runAgentLoop(basePrompt, role, difficulty) {
+  const maxIterations = 5;
+  let toolResults = [];
+  let iteration = 0;
+
+  // Initial prompt asking Gemini to decide what data it needs
+  const planningPrompt = `You are creating a training scenario for a ${role} at ${difficulty} difficulty.
+
+Before generating the scenario, you have access to real-time data tools:
+1. get_weather(city) - Get current weather for any major US city
+2. search_news(query) - Search recent news for relevant events
+
+Think about what real-time data would make your scenario more realistic and current. You might want to:
+- Check weather in cities relevant to your scenario (for weather-related delays)
+- Search for recent pharma/supply chain news to incorporate current events
+- Look for any recent Vertex Pharmaceuticals news
+
+Decide which tools to call (0-3 calls recommended). Respond with a JSON array of tool calls:
+[
+  {"tool": "get_weather", "args": {"city": "Chicago"}},
+  {"tool": "search_news", "args": {"query": "pharmaceutical supply chain"}}
+]
+
+Or respond with [] if you don't need any real-time data for this scenario.
+
+Respond with ONLY the JSON array, no other text.`;
+
+  try {
+    // Ask Gemini what tools it wants to use
+    const planResponse = await geminiModel.generateContent(planningPrompt);
+    let planText = planResponse.response.text().trim();
+    
+    // Clean up response
+    if (planText.startsWith('```json')) planText = planText.slice(7);
+    if (planText.startsWith('```')) planText = planText.slice(3);
+    if (planText.endsWith('```')) planText = planText.slice(0, -3);
+    planText = planText.trim();
+
+    // Parse tool calls
+    let toolCalls = [];
+    try {
+      const jsonMatch = planText.match(/\[[\s\S]*\]/);
+      if (jsonMatch) {
+        toolCalls = JSON.parse(jsonMatch[0]);
+      }
+    } catch (e) {
+      console.log('No valid tool calls parsed, proceeding without real-time data');
+      toolCalls = [];
+    }
+
+    // Execute each tool call
+    for (const call of toolCalls) {
+      if (iteration >= maxIterations) break;
+      
+      console.log(`Agent calling tool: ${call.tool}`, call.args);
+      const result = await executeRealTimeTool(call.tool, call.args);
+      toolResults.push({
+        tool: call.tool,
+        args: call.args,
+        result: result
+      });
+      iteration++;
+    }
+
+  } catch (error) {
+    console.error('Agent planning error:', error.message);
+    // Continue without real-time data
+  }
+
+  return toolResults;
+}
+
+// ============================================================
 // TOOL DEFINITIONS - For Claude's agentic capabilities
 // ============================================================
 const tools = [
@@ -766,13 +999,50 @@ app.get('/api/health', (req, res) => {
 // Generate a new scenario
 app.post('/api/scenario/generate', async (req, res) => {
   try {
-    const { role, difficulty } = req.body;
+    const { role, difficulty, useRealTimeData } = req.body;
 
-    const prompt = `${SCENARIO_CONTEXT}
+    let realTimeContext = '';
+    let toolsUsed = [];
+
+    // If real-time data is enabled, run the agent loop
+    if (useRealTimeData) {
+      console.log('🤖 Agent mode enabled - gathering real-time data...');
+      
+      const toolResults = await runAgentLoop(SCENARIO_CONTEXT, role, difficulty);
+      toolsUsed = toolResults;
+      
+      if (toolResults.length > 0) {
+        realTimeContext = `
+
+## REAL-TIME DATA (gathered by AI agent - incorporate this into your scenario)
+
+The AI agent searched for current information to make this scenario realistic. Use this data:
+
+${toolResults.map(tr => {
+  if (tr.result.success) {
+    return `### ${tr.tool.toUpperCase()} - ${JSON.stringify(tr.args)}
+${JSON.stringify(tr.result.data, null, 2)}`;
+  } else {
+    return `### ${tr.tool.toUpperCase()} - Failed: ${tr.result.error}`;
+  }
+}).join('\n\n')}
+
+IMPORTANT: Incorporate the real-time data above into your scenario naturally. For example:
+- If weather data shows a storm, use that actual weather condition
+- If news mentions supply chain disruptions, weave that into the scenario
+- Reference actual conditions to make the scenario feel current and realistic
+- You can adjust details but keep the core real-world elements
+`;
+        console.log(`✅ Agent gathered ${toolResults.length} data sources`);
+      }
+    }
+
+    const prompt = `${SCENARIO_CONTEXT}${realTimeContext}
 
 NOW GENERATE A NEW SCENARIO:
 - Role: ${role}
 - Difficulty: ${difficulty.toUpperCase()}
+${useRealTimeData ? '- IMPORTANT: This scenario should incorporate the real-time data provided above' : ''}
 
 Remember:
 - Generate completely fresh flight IDs, patient IDs, and circumstances
@@ -781,6 +1051,7 @@ Remember:
 - Match the difficulty level for time pressure and hints
 - For Quality Engineer: Focus on CGT/Casgevy scenarios with cryo emergencies
 - For Supply Chain Planner: Focus on demand spikes, inventory issues, or launch challenges
+${useRealTimeData ? '- Incorporate actual weather conditions and news events from the real-time data' : ''}
 
 Respond with ONLY the JSON object. No markdown, no explanation, just valid JSON.`;
 
@@ -828,6 +1099,15 @@ Respond with ONLY the JSON object. No markdown, no explanation, just valid JSON.
             });
           }
           scenarioData.scenario_data.cryo_expiry_time = expiryTime;
+        }
+
+        // Add metadata about real-time data usage
+        if (useRealTimeData && toolsUsed.length > 0) {
+          scenarioData.real_time_data = {
+            enabled: true,
+            tools_used: toolsUsed.map(t => ({ tool: t.tool, args: t.args, success: t.result.success })),
+            generated_at: new Date().toISOString()
+          };
         }
         
       } else {

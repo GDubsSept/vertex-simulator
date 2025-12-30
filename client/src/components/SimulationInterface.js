@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import DataPanel from './DataPanel';
 
-const SimulationInterface = ({ role, difficulty, onComplete, onExit }) => {
+const SimulationInterface = ({ role, difficulty, useRealTimeData, onComplete, onExit }) => {
   const [scenario, setScenario] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -103,7 +103,8 @@ const SimulationInterface = ({ role, difficulty, onComplete, onExit }) => {
 
       const response = await axios.post('/api/scenario/generate', {
         role: roleLabel,
-        difficulty: difficulty.toUpperCase()
+        difficulty: difficulty.toUpperCase(),
+        useRealTimeData: useRealTimeData
       });
 
       if (response.data.success) {
