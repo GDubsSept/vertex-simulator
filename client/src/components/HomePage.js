@@ -1,16 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Plane, 
   GraduationCap, 
   ChevronRight,
   Zap,
   Target,
-  BookOpen
+  BookOpen,
+  Compass
 } from 'lucide-react';
+import Tutorial from './Tutorial';
 
 const HomePage = ({ onSelectSimulation, onSelectTestPrep, onSelectFlashcards }) => {
+  const [showTutorial, setShowTutorial] = useState(false);
+
   return (
     <div className="min-h-screen flex flex-col">
+      {/* Tutorial Modal */}
+      {showTutorial && <Tutorial onClose={() => setShowTutorial(false)} />}
+
       {/* Header */}
       <header className="border-b border-neutral-800 bg-neutral-900/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 py-4">
@@ -45,35 +52,67 @@ const HomePage = ({ onSelectSimulation, onSelectTestPrep, onSelectFlashcards }) 
             </p>
           </div>
 
-          {/* Three Options */}
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Flashcard Study Card */}
+          {/* Four Options */}
+          <div className="grid md:grid-cols-4 gap-4">
+            {/* Platform Guide Card */}
             <button
-              onClick={onSelectFlashcards}
-              className="group relative p-6 rounded-2xl border-2 border-neutral-800 bg-neutral-900/50 
+              onClick={() => setShowTutorial(true)}
+              className="group relative p-5 rounded-2xl border-2 border-dashed border-neutral-700 bg-neutral-900/30 
                 hover:border-vertex-500 hover:bg-vertex-500/5 transition-all duration-300 text-left"
             >
               <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                <ChevronRight className="w-6 h-6 text-vertex-400" />
+                <ChevronRight className="w-5 h-5 text-vertex-400" />
               </div>
               
-              <div className="w-12 h-12 rounded-xl bg-vertex-500/20 flex items-center justify-center mb-4">
-                <BookOpen className="w-6 h-6 text-vertex-400" />
+              <div className="w-10 h-10 rounded-xl bg-neutral-800 group-hover:bg-vertex-500/20 flex items-center justify-center mb-3 transition-colors">
+                <Compass className="w-5 h-5 text-neutral-400 group-hover:text-vertex-400 transition-colors" />
               </div>
               
-              <h3 className="text-xl font-display font-bold text-neutral-100 mb-2">
+              <h3 className="text-lg font-display font-bold text-neutral-100 mb-1">
+                Platform Guide
+              </h3>
+              
+              <p className="text-neutral-500 text-sm mb-3">
+                New here? Take a guided tour of all features.
+              </p>
+              
+              <div className="flex flex-wrap gap-1">
+                <span className="px-2 py-0.5 bg-neutral-800 rounded-full text-xs text-neutral-500">
+                  5 min
+                </span>
+                <span className="px-2 py-0.5 bg-neutral-800 rounded-full text-xs text-neutral-500">
+                  Interactive
+                </span>
+              </div>
+            </button>
+
+            {/* Flashcard Study Card */}
+            <button
+              onClick={onSelectFlashcards}
+              className="group relative p-5 rounded-2xl border-2 border-neutral-800 bg-neutral-900/50 
+                hover:border-vertex-500 hover:bg-vertex-500/5 transition-all duration-300 text-left"
+            >
+              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                <ChevronRight className="w-5 h-5 text-vertex-400" />
+              </div>
+              
+              <div className="w-10 h-10 rounded-xl bg-vertex-500/20 flex items-center justify-center mb-3">
+                <BookOpen className="w-5 h-5 text-vertex-400" />
+              </div>
+              
+              <h3 className="text-lg font-display font-bold text-neutral-100 mb-1">
                 Study Flashcards
               </h3>
               
-              <p className="text-neutral-400 text-sm mb-4">
-                Review key concepts with interactive flashcards. Filter by category and track your progress.
+              <p className="text-neutral-400 text-sm mb-3">
+                Review key concepts with interactive flashcards.
               </p>
               
-              <div className="flex flex-wrap gap-2">
-                <span className="px-2 py-1 bg-neutral-800 rounded-full text-xs text-neutral-400">
+              <div className="flex flex-wrap gap-1">
+                <span className="px-2 py-0.5 bg-neutral-800 rounded-full text-xs text-neutral-400">
                   158 Cards
                 </span>
-                <span className="px-2 py-1 bg-neutral-800 rounded-full text-xs text-neutral-400">
+                <span className="px-2 py-0.5 bg-neutral-800 rounded-full text-xs text-neutral-400">
                   Self-Paced
                 </span>
               </div>
@@ -82,30 +121,30 @@ const HomePage = ({ onSelectSimulation, onSelectTestPrep, onSelectFlashcards }) 
             {/* Test Prep Card */}
             <button
               onClick={onSelectTestPrep}
-              className="group relative p-6 rounded-2xl border-2 border-neutral-800 bg-neutral-900/50 
+              className="group relative p-5 rounded-2xl border-2 border-neutral-800 bg-neutral-900/50 
                 hover:border-vertex-500 hover:bg-vertex-500/5 transition-all duration-300 text-left"
             >
               <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                <ChevronRight className="w-6 h-6 text-vertex-400" />
+                <ChevronRight className="w-5 h-5 text-vertex-400" />
               </div>
               
-              <div className="w-12 h-12 rounded-xl bg-vertex-500/20 flex items-center justify-center mb-4">
-                <GraduationCap className="w-6 h-6 text-vertex-400" />
+              <div className="w-10 h-10 rounded-xl bg-vertex-500/20 flex items-center justify-center mb-3">
+                <GraduationCap className="w-5 h-5 text-vertex-400" />
               </div>
               
-              <h3 className="text-xl font-display font-bold text-neutral-100 mb-2">
+              <h3 className="text-lg font-display font-bold text-neutral-100 mb-1">
                 Knowledge Test
               </h3>
               
-              <p className="text-neutral-400 text-sm mb-4">
-                Adaptive testing with AI grading. Identifies weak areas and creates personalized study plans.
+              <p className="text-neutral-400 text-sm mb-3">
+                Adaptive testing with AI grading and feedback.
               </p>
               
-              <div className="flex flex-wrap gap-2">
-                <span className="px-2 py-1 bg-neutral-800 rounded-full text-xs text-neutral-400">
+              <div className="flex flex-wrap gap-1">
+                <span className="px-2 py-0.5 bg-neutral-800 rounded-full text-xs text-neutral-400">
                   AI Grading
                 </span>
-                <span className="px-2 py-1 bg-neutral-800 rounded-full text-xs text-neutral-400">
+                <span className="px-2 py-0.5 bg-neutral-800 rounded-full text-xs text-neutral-400">
                   Adaptive
                 </span>
               </div>
@@ -114,30 +153,30 @@ const HomePage = ({ onSelectSimulation, onSelectTestPrep, onSelectFlashcards }) 
             {/* Simulation Card */}
             <button
               onClick={onSelectSimulation}
-              className="group relative p-6 rounded-2xl border-2 border-neutral-800 bg-neutral-900/50 
+              className="group relative p-5 rounded-2xl border-2 border-neutral-800 bg-neutral-900/50 
                 hover:border-vertex-500 hover:bg-vertex-500/5 transition-all duration-300 text-left"
             >
               <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                <ChevronRight className="w-6 h-6 text-vertex-400" />
+                <ChevronRight className="w-5 h-5 text-vertex-400" />
               </div>
               
-              <div className="w-12 h-12 rounded-xl bg-vertex-500/20 flex items-center justify-center mb-4">
-                <Plane className="w-6 h-6 text-vertex-400" />
+              <div className="w-10 h-10 rounded-xl bg-vertex-500/20 flex items-center justify-center mb-3">
+                <Plane className="w-5 h-5 text-vertex-400" />
               </div>
               
-              <h3 className="text-xl font-display font-bold text-neutral-100 mb-2">
+              <h3 className="text-lg font-display font-bold text-neutral-100 mb-1">
                 Scenario Training
               </h3>
               
-              <p className="text-neutral-400 text-sm mb-4">
-                Experience realistic supply chain crisis scenarios. Make decisions under pressure with AI feedback.
+              <p className="text-neutral-400 text-sm mb-3">
+                Realistic crisis simulations with AI feedback.
               </p>
               
-              <div className="flex flex-wrap gap-2">
-                <span className="px-2 py-1 bg-neutral-800 rounded-full text-xs text-neutral-400">
+              <div className="flex flex-wrap gap-1">
+                <span className="px-2 py-0.5 bg-neutral-800 rounded-full text-xs text-neutral-400">
                   Role-Playing
                 </span>
-                <span className="px-2 py-1 bg-neutral-800 rounded-full text-xs text-neutral-400">
+                <span className="px-2 py-0.5 bg-neutral-800 rounded-full text-xs text-neutral-400">
                   Real-time
                 </span>
               </div>

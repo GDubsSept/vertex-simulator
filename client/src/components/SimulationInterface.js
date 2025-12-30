@@ -17,6 +17,7 @@ import {
   LogOut
 } from 'lucide-react';
 import DataPanel from './DataPanel';
+import LoadingMessages from './LoadingMessages';
 
 const SimulationInterface = ({ role, difficulty, useRealTimeData, onComplete, onExit }) => {
   const [scenario, setScenario] = useState(null);
@@ -226,16 +227,8 @@ const SimulationInterface = ({ role, difficulty, useRealTimeData, onComplete, on
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 text-vertex-500 animate-spin mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-neutral-100 mb-2">
-            Generating Scenario...
-          </h2>
-          <p className="text-neutral-400 text-sm">
-            The AI is preparing your training simulation
-          </p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center p-8">
+        <LoadingMessages type="scenario" useRealTimeData={useRealTimeData} />
       </div>
     );
   }
