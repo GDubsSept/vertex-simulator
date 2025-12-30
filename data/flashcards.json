@@ -187,36 +187,6 @@
       "back": "A platform for containerization. It packages an Agent and its dependencies so it runs identically on a laptop, in the cloud, or on a factory edge device."
     },
     {
-      "id": 32,
-      "category": "Case Study: Peakview",
-      "front": "Describe your Grocery Cold Chain Use Case.",
-      "back": "Problem: Reactive repairs caused 4% food waste. Solution: Deployed IoT Sensors (LoRaWAN) + AI Agent. The Agent detected 'Thermal Anomalies' (Rate of change) via MQTT stream and auto-created work orders."
-    },
-    {
-      "id": 33,
-      "category": "Case Study: Peakview",
-      "front": "Describe the Peakview Risk Architecture.",
-      "back": "Multi-Model AI approach. Backend: Node.js/Express with PostgreSQL (Row Level Security). Dynamic switching between Claude (Reasoning) and Gemini (Fallback)."
-    },
-    {
-      "id": 34,
-      "category": "Case Study: Clean Harbors",
-      "front": "Describe your Oracle Cloud Transformation Use Case.",
-      "back": "Project: End-to-end Oracle SCM Cloud deployment. Key Learning: 'Data Governance' and 'Communication' are vital. Used 'Parallel Run' validation (old vs new system) to earn trust from Finance."
-    },
-    {
-      "id": 35,
-      "category": "Case Study: CVS Health",
-      "front": "Describe your Cost-to-Serve Use Case.",
-      "back": "Project: Total Cost-to-Serve Model. Tech: SQL/Python modeling to combine transportation, holding, and labor costs. Result: $20M savings by optimizing inventory placement."
-    },
-    {
-      "id": 36,
-      "category": "Case Study: Amazon",
-      "front": "Describe your Network Design Use Case.",
-      "back": "Project: Inbound Cross-Dock Network. Tech: Simulation modeling and algorithmic placement. Result: $70M annualized savings."
-    },
-    {
       "id": 37,
       "category": "AI Strategy",
       "front": "What is Human-in-the-Loop (HITL)?",
@@ -298,7 +268,7 @@
       "id": 50,
       "category": "Digital Strategy",
       "front": "What is a 'System of Record' vs. 'System of Intelligence'?",
-      "back": "Record: The database of truth (SAP). Intelligence: The AI layer on top that provides insights (Peakview/Agents). Don't try to make the Intelligence layer the Record."
+      "back": "Record: The database of truth (SAP). Intelligence: The AI layer on top that provides insights. Don't try to make the Intelligence layer the Record."
     },
     {
       "id": 51,
@@ -328,19 +298,19 @@
       "id": 55,
       "category": "Software Engineering",
       "front": "What is React?",
-      "back": "A JavaScript library for building user interfaces (Front-end). Used to build the Peakview dashboard."
+      "back": "A JavaScript library for building user interfaces (Front-end)."
     },
     {
       "id": 56,
       "category": "Software Engineering",
       "front": "What is Node.js?",
-      "back": "A JavaScript runtime built on Chrome's V8 engine. Used to run the Peakview Backend server."
+      "back": "A JavaScript runtime built on Chrome's V8 engine."
     },
     {
       "id": 57,
       "category": "Software Engineering",
       "front": "What is PostgreSQL?",
-      "back": "An open-source relational database. The primary 'System of Record' for the Peakview platform."
+      "back": "An open-source relational database."
     },
     {
       "id": 58,

@@ -31,7 +31,46 @@ const SimulationInterface = ({ role, difficulty, onComplete, onExit }) => {
   const [turnCount, setTurnCount] = useState(0);
   const [showGradeButton, setShowGradeButton] = useState(false);
   const [showMobileData, setShowMobileData] = useState(false);
+  const [dataOverrides, setDataOverrides] = useState({});
+  const [cryoStatus, setCryoStatus] = useState('active'); // active, saved, expired
   const messagesEndRef = useRef(null);
+
+  // Keywords that indicate user has taken action to save cells
+  const cryoSaveKeywords = [
+    'cryo depot', 'transfer to cryo', 'ground transport', 'nearest depot',
+    'chicago cryo', 'emergency storage', 'secure the cells', 'reroute',
+    'alternative storage', 'backup facility'
+  ];
+
+  // Check if AI response indicates cells were saved
+  const checkForCryoSave = (aiResponse, userMessage) => {
+    const combined = (aiResponse + ' ' + userMessage).toLowerCase();
+    const hasSaveAction = cryoSaveKeywords.some(kw => combined.includes(kw));
+    const hasPositiveOutcome = combined.includes('excellent') || 
+                               combined.includes('correct') || 
+                               combined.includes('good decision') ||
+                               combined.includes('well done') ||
+                               combined.includes('right choice') ||
+                               combined.includes('successfully') ||
+                               combined.includes('cells are safe') ||
+                               combined.includes('secured');
+    
+    if (hasSaveAction && hasPositiveOutcome) {
+      setCryoStatus('saved');
+      // Update flight status
+      setDataOverrides(prev => ({
+        ...prev,
+        flights: {
+          'VX-CGT-001': {
+            status: 'DIVERTED',
+            location: 'Chicago Cryo Depot',
+            cargo: 'Patient cells - Casgevy therapy',
+            patient_id: 'PT-7829'
+          }
+        }
+      }));
+    }
+  };
 
   // Timer effect
   useEffect(() => {
@@ -129,6 +168,9 @@ const SimulationInterface = ({ role, difficulty, onComplete, onExit }) => {
           content: response.data.response,
           timestamp: new Date()
         }]);
+
+        // Check if user action saved the cryo cells
+        checkForCryoSave(response.data.response, userMessage);
 
         setTurnCount(prev => prev + 1);
 
@@ -416,7 +458,7 @@ const SimulationInterface = ({ role, difficulty, onComplete, onExit }) => {
 
         {/* Right Panel - Live Data (Desktop) */}
         <aside className="hidden lg:block w-96 flex-none border-l border-neutral-800 bg-neutral-900/30 overflow-y-auto">
-          <DataPanel role={role} scenario={scenario} />
+          <DataPanel role={role} scenario={scenario} dataOverrides={dataOverrides} cryoStatus={cryoStatus} />
         </aside>
 
         {/* Mobile Data Panel Overlay */}
@@ -430,7 +472,7 @@ const SimulationInterface = ({ role, difficulty, onComplete, onExit }) => {
                 Close Data Panel
               </button>
             </div>
-            <DataPanel role={role} scenario={scenario} />
+            <DataPanel role={role} scenario={scenario} dataOverrides={dataOverrides} cryoStatus={cryoStatus} />
           </div>
         )}
       </div>

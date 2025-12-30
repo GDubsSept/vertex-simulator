@@ -19,8 +19,9 @@ import {
   Map
 } from 'lucide-react';
 import FlightMap from './FlightMap';
+import CryoCountdown from './CryoCountdown';
 
-const DataPanel = ({ role, scenario }) => {
+const DataPanel = ({ role, scenario, dataOverrides, cryoStatus }) => {
   const [flightData, setFlightData] = useState(null);
   const [inventoryData, setInventoryData] = useState(null);
   const [demandData, setDemandData] = useState(null);
@@ -30,6 +31,21 @@ const DataPanel = ({ role, scenario }) => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  // Apply data overrides when they change
+  useEffect(() => {
+    if (dataOverrides) {
+      if (dataOverrides.flights) {
+        setFlightData(prev => ({ ...prev, ...dataOverrides.flights }));
+      }
+      if (dataOverrides.inventory) {
+        setInventoryData(prev => ({ ...prev, ...dataOverrides.inventory }));
+      }
+      if (dataOverrides.demand) {
+        setDemandData(prev => ({ ...prev, ...dataOverrides.demand }));
+      }
+    }
+  }, [dataOverrides]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -48,6 +64,22 @@ const DataPanel = ({ role, scenario }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Find CGT flight with cryo expiry for countdown
+  const cryoFlight = flightData ? Object.entries(flightData).find(
+    ([id, data]) => data.cryo_expiry && data.cargo?.includes('Patient cells')
+  ) : null;
+
+  // Calculate a dynamic expiry time (scenario start + 3 hours)
+  const getCryoExpiryTime = () => {
+    if (cryoFlight && cryoFlight[1].cryo_expiry) {
+      // Use current time + remaining time for demo purposes
+      const now = new Date();
+      // Set expiry to 2 hours from now for dramatic effect
+      return new Date(now.getTime() + 2 * 60 * 60 * 1000).toISOString();
+    }
+    return null;
   };
 
   const tabs = [
@@ -123,6 +155,15 @@ const DataPanel = ({ role, scenario }) => {
       <div className="flex-1 overflow-y-auto p-4">
         {activeTab === 'overview' && (
           <div className="space-y-4">
+            {/* Cryo Countdown - Show for CGT scenarios */}
+            {cryoFlight && (
+              <CryoCountdown
+                expiryTime={getCryoExpiryTime()}
+                patientId={cryoFlight[1].patient_id}
+                status={cryoStatus || 'active'}
+              />
+            )}
+
             {/* Quick Stats */}
             <div className="grid grid-cols-2 gap-2">
               <StatCard
