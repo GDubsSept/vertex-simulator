@@ -18,6 +18,396 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const geminiModel = genAI.getGenerativeModel({ model: 'gemini-3-pro-preview' });
 
 // ============================================================
+// COMPREHENSIVE SCENARIO CONTEXT FOR GEMINI
+// ============================================================
+const SCENARIO_CONTEXT = `
+## VERTEX PHARMACEUTICALS - COMPANY OVERVIEW
+
+Vertex Pharmaceuticals is a global biotechnology company headquartered in Boston, Massachusetts. The company focuses on developing medicines for serious diseases including cystic fibrosis, sickle cell disease, and acute pain.
+
+### THREE SUPPLY CHAIN MODELS
+
+**1. SMALL MOLECULE - Cystic Fibrosis (Trikafta/Kaftrio)**
+- Product: Trikafta (US) / Kaftrio (EU) - oral tablets
+- Manufacturing: Continuous Manufacturing at Boston Seaport facility
+- Storage: Room temperature (15-25°C), 36-month shelf life
+- Distribution: Traditional wholesale/retail pharmacy
+- Key Technology: PAT (Process Analytical Technology) sensors for real-time quality
+- Volume: High volume, steady demand (~90,000 patients in US)
+- Key Metrics: OEE, batch cycle time, API purity, fill rate
+
+**2. CELL & GENE THERAPY - Sickle Cell Disease (Casgevy)**
+- Product: Casgevy (exagamglogene autotemcel) - one-time gene therapy
+- Manufacturing: Autologous (patient's own cells) at CDMO partners (Lonza)
+- Storage: Cryopreserved at -150°C in liquid nitrogen vapor phase
+- Distribution: Vein-to-vein supply chain (patient → manufacturing → patient)
+- Critical Requirements:
+  - Chain of Identity (COI): Permanent link ensuring product matches specific patient
+  - Chain of Custody (COC): Temperature and handling documentation
+  - Cryo Hold Time: Typically 4-6 hours out of cryo storage before viability risk
+  - Manufacturing Time: 16-20 weeks from apheresis to infusion-ready product
+- Volume: Low volume, high complexity (~100,000 eligible patients, ~50-100 treatments/year currently)
+- Key Metrics: Cell viability, COI compliance, vein-to-vein time, on-time delivery
+
+**3. ACUTE PAIN LAUNCH - Suzetrigine (VX-548)**
+- Product: Suzetrigine - oral tablets for acute pain (non-opioid)
+- Manufacturing: Traditional batch manufacturing, transitioning to continuous
+- Storage: Room temperature (15-25°C)
+- Distribution: High-volume retail pharmacy launch (CVS, Walgreens, hospitals)
+- Launch Phase: New product launch requiring demand sensing and rapid scaling
+- Volume: Very high potential volume (millions of acute pain episodes annually)
+- Key Metrics: Stockout rate, fill rate, demand forecast accuracy, shelf availability
+
+---
+
+## GEOGRAPHIC REFERENCE DATA
+
+### Major US Airports for Pharma Logistics
+| Code | City | State | Hub Type |
+|------|------|-------|----------|
+| BOS | Boston | MA | Vertex HQ, CGT destination |
+| ORD | Chicago | IL | Major hub, weather delays common |
+| ATL | Atlanta | GA | Southeast hub |
+| DFW | Dallas/Fort Worth | TX | Southwest hub |
+| DEN | Denver | CO | Mountain region hub |
+| LAX | Los Angeles | CA | West Coast hub |
+| SFO | San Francisco | CA | West Coast secondary |
+| MEM | Memphis | TN | FedEx global hub |
+| CVG | Cincinnati | KY | DHL Americas hub |
+| JFK | New York | NY | International gateway |
+| MIA | Miami | FL | Latin America gateway |
+| SEA | Seattle | WA | Pacific Northwest |
+| PHX | Phoenix | AZ | Southwest secondary |
+| MSP | Minneapolis | MN | Upper Midwest |
+| DTW | Detroit | MI | Great Lakes region |
+
+### Vertex Distribution Centers
+| ID | Location | City | State | Primary Products | Cryo Capable |
+|----|----------|------|-------|------------------|--------------|
+| BOS-DC | Boston Distribution Center | Boston | MA | All products | Yes (50 slots) |
+| MEM-HUB | Memphis Central Hub | Memphis | TN | Trikafta, Suzetrigine | Yes (100 slots) |
+| CHI-DC | Chicago Distribution Center | Chicago | IL | All products | Yes (75 slots) |
+| ATL-DC | Atlanta Distribution Center | Atlanta | GA | Trikafta, Suzetrigine | Yes (30 slots) |
+| DAL-DC | Dallas Distribution Center | Dallas | TX | Trikafta, Suzetrigine | Yes (25 slots) |
+| LAX-DC | Los Angeles Distribution Center | Los Angeles | CA | All products | Yes (40 slots) |
+| DEN-DC | Denver Distribution Center | Denver | CO | Trikafta, Suzetrigine | No |
+
+### Specialized Cryo Depots (for CGT emergencies)
+| ID | Name | City | Nearest Airport | Drive Time from Airport | Available Slots |
+|----|------|------|-----------------|------------------------|-----------------|
+| BOS-CRYO | Boston Cryo Center | Boston | BOS | 15 min | 25 |
+| CHI-CRYO | Chicago Cryo Depot | Elk Grove Village | ORD | 20 min | 28 |
+| MKE-CRYO | Milwaukee Cryo Facility | Milwaukee | MKE | 15 min | 15 |
+| DEN-CRYO | Denver Cryo Storage | Aurora | DEN | 25 min | 18 |
+| ATL-CRYO | Atlanta Cryo Center | College Park | ATL | 12 min | 22 |
+| LAX-CRYO | Los Angeles Cryo Depot | El Segundo | LAX | 10 min | 30 |
+| DFW-CRYO | Dallas Cryo Facility | Irving | DFW | 18 min | 20 |
+| MEM-CRYO | Memphis Cryo Hub | Memphis | MEM | 8 min | 35 |
+
+### US Regions for Demand Planning
+| Region | States Included | Major DCs |
+|--------|-----------------|-----------|
+| NORTHEAST | MA, NY, NJ, PA, CT, RI, NH, VT, ME | BOS-DC |
+| SOUTHEAST | FL, GA, NC, SC, VA, TN, AL, MS | ATL-DC |
+| MIDWEST | IL, OH, MI, IN, WI, MN, IA, MO | CHI-DC |
+| SOUTHWEST | TX, AZ, NM, OK, AR, LA | DAL-DC |
+| WEST | CA, WA, OR, NV, CO, UT | LAX-DC, DEN-DC |
+
+---
+
+## OPERATIONAL PARAMETERS
+
+### Cryo Shipper Hold Times
+| Shipper Type | Temperature | Max Hold Time | Use Case |
+|--------------|-------------|---------------|----------|
+| MVE Vapor Shipper | -150°C | 10 days | Long-haul CGT transport |
+| Cryoport Express | -150°C | 7 days | Standard CGT transport |
+| Emergency Portable | -150°C | 4-6 hours | Ground transport, emergencies |
+| Dry Ice Shipper | -78°C | 48-72 hours | Backup, not for CGT |
+
+### Common Delay Causes
+| Category | Specific Causes | Typical Duration |
+|----------|-----------------|------------------|
+| Weather | Ice storm, thunderstorms, fog, snow | 2-12 hours |
+| Mechanical | Aircraft maintenance, equipment failure | 1-6 hours |
+| Customs | Documentation issues, inspection holds | 4-24 hours |
+| Operational | Crew timeout, airport congestion, ground stop | 1-4 hours |
+| Security | TSA holds, cargo screening delays | 1-3 hours |
+
+### Inventory Level Ranges (units)
+| Product | Small DC | Medium DC | Large Hub |
+|---------|----------|-----------|-----------|
+| Trikafta | 15,000-35,000 | 35,000-60,000 | 80,000-150,000 |
+| Suzetrigine | 10,000-25,000 | 25,000-50,000 | 60,000-100,000 |
+| Cryo Slots | 15-30 | 30-50 | 75-100 |
+
+### Demand Forecast Ranges (7-day, units)
+| Product | Low Demand | Normal | High/Spike |
+|---------|------------|--------|------------|
+| Trikafta | 5,000-10,000 | 10,000-20,000 | 20,000-35,000 |
+| Suzetrigine | 8,000-15,000 | 15,000-30,000 | 30,000-50,000 |
+
+### Stockout Risk Thresholds
+| Risk Level | Inventory vs 7-Day Forecast |
+|------------|----------------------------|
+| LOW | Inventory > 150% of forecast |
+| MEDIUM | Inventory 80-150% of forecast |
+| HIGH | Inventory < 80% of forecast |
+
+---
+
+## ROLE DEFINITIONS
+
+### Quality Engineer (Cell & Gene Therapy Focus)
+**Responsibilities:**
+- Monitor CGT shipments and ensure product integrity
+- Verify Chain of Identity compliance
+- Manage temperature excursions and cryo emergencies
+- Coordinate with treatment centers and patients
+- Document all actions for regulatory compliance
+
+**Typical Scenario Types:**
+- Flight delays with cryo expiry risk
+- Temperature excursion during transport
+- COI verification discrepancies
+- Cryo depot capacity emergencies
+- Patient scheduling conflicts with product availability
+
+### Supply Chain Planner (Commercial Operations Focus)
+**Responsibilities:**
+- Monitor inventory levels across distribution network
+- Respond to demand signals and forecast changes
+- Coordinate inter-depot transfers
+- Manage product allocation during shortages
+- Support new product launches
+
+**Typical Scenario Types:**
+- Regional demand spikes causing stockout risk
+- Inventory imbalances across network
+- Supply disruptions from manufacturing
+- New product launch distribution challenges
+- Seasonal demand fluctuations
+
+---
+
+## DIFFICULTY CALIBRATION
+
+### BEGINNER
+- Single clear issue to address
+- Time pressure: 3-4 hours
+- 3-4 helpful hints provided
+- Clear "right answer" path
+- Limited stakeholders involved
+
+### INTERMEDIATE
+- 2-3 compounding factors
+- Time pressure: 1.5-2.5 hours
+- 1-2 subtle hints provided
+- Multiple viable approaches
+- Cross-functional coordination needed
+
+### EXPERT
+- Cascading failures, evolving situation
+- Time pressure: 30-90 minutes
+- No hints provided
+- Competing priorities and trade-offs
+- Executive escalation decisions
+- Regulatory/compliance implications
+
+---
+
+## REQUIRED OUTPUT SCHEMA
+
+You must generate a complete JSON object with ALL of the following fields. Every field is required.
+
+{
+  "alert_title": "string - Compelling 5-10 word title describing the emergency",
+  "alert_severity": "CRITICAL | HIGH | MEDIUM",
+  "briefing": "string - 3-5 sentence situation briefing. Be specific with flight IDs, times, locations, patient IDs. All details here MUST match the data below.",
+  "initial_data": {
+    "flight_id": "string or null - Primary flight ID if applicable (e.g., VX-CGT-042)",
+    "location": "string - Current location of the issue",
+    "time_pressure": "string - How much time before critical deadline (e.g., '2 hours 15 minutes until cryo expiry')",
+    "key_metrics": {
+      "metric_name": "value - 2-4 relevant metrics"
+    }
+  },
+  "ideal_response_checklist": ["array of 5-8 actions the trainee should take - DO NOT reveal to user"],
+  "hints": ["array of 1-4 hints based on difficulty level"],
+  "scenario_data": {
+    "flights": {
+      "FLIGHT-ID": {
+        "status": "GROUNDED | DELAYED | IN_TRANSIT | DIVERTED | ARRIVED",
+        "location": "Current location (airport name with code)",
+        "destination": "Destination (airport name with code)",
+        "cargo": "Description of cargo",
+        "delay_reason": "Reason if delayed/grounded, null otherwise",
+        "patient_id": "Patient ID if CGT shipment, null otherwise",
+        "cryo_expiry": null,
+        "eta_original": "ISO datetime string",
+        "weight_kg": "number if applicable, null otherwise",
+        "units": "number if applicable, null otherwise"
+      }
+    },
+    "inventory": {
+      "DEPOT-ID": {
+        "location": "Full location name",
+        "trikafta_units": "number",
+        "suzetrigine_units": "number",
+        "cryo_capacity": "number",
+        "cryo_available": "number"
+      }
+    },
+    "demand": {
+      "REGION": {
+        "region": "Full region name",
+        "suzetrigine_7day_forecast": "number",
+        "suzetrigine_current_inventory": "number",
+        "stockout_risk": "HIGH | MEDIUM | LOW",
+        "trending_states": ["array of state names showing increased demand"]
+      }
+    },
+    "cryo_expiry_minutes": "number - Minutes from now until cryo expiry (for CGT scenarios), null otherwise",
+    "cryo_depots": [
+      {
+        "id": "DEPOT-ID",
+        "name": "Full name",
+        "distance_miles": "number - distance from incident location",
+        "drive_time_minutes": "number",
+        "available_slots": "number"
+      }
+    ]
+  }
+}
+
+---
+
+## COMPLETE EXAMPLE OUTPUT
+
+Here is a perfect example of what you should generate for a Quality Engineer at INTERMEDIATE difficulty:
+
+{
+  "alert_title": "CGT Shipment Grounded - Patient Cells at Risk",
+  "alert_severity": "CRITICAL",
+  "briefing": "Flight VX-CGT-089 carrying autologous Casgevy cells for Patient PT-4521 has been grounded at Denver International Airport (DEN) due to a severe thunderstorm system. The aircraft was en route from Los Angeles (LAX) to Boston (BOS) for manufacturing. Current cryo shipper readings show -151°C but the portable unit has approximately 2 hours 30 minutes of hold time remaining. Ground transport to the nearest cryo facility must be arranged immediately to preserve cell viability. The patient has been waiting 18 weeks for this treatment.",
+  "initial_data": {
+    "flight_id": "VX-CGT-089",
+    "location": "Denver International Airport (DEN)",
+    "time_pressure": "2 hours 30 minutes until cryo expiry",
+    "key_metrics": {
+      "current_temp": "-151°C",
+      "patient_wait_time": "18 weeks",
+      "cells_collected": "8.2 × 10⁶ CD34+ cells",
+      "nearest_cryo": "25 min drive"
+    }
+  },
+  "ideal_response_checklist": [
+    "Immediately contact Denver Cryo Storage (DEN-CRYO) to confirm slot availability",
+    "Arrange emergency ground transport with qualified cryo courier",
+    "Verify Chain of Identity documentation is complete and accessible",
+    "Notify Boston manufacturing site of delay and revised ETA",
+    "Contact Patient Coordinator to update PT-4521's care team",
+    "Document all actions in QMS with timestamps",
+    "Monitor cryo shipper temperature readings every 15 minutes",
+    "Prepare contingency for alternative flight routing once weather clears"
+  ],
+  "hints": [
+    "Consider ground transport options to preserve the cells while weather clears",
+    "The patient's care team should be kept informed of any delays"
+  ],
+  "scenario_data": {
+    "flights": {
+      "VX-CGT-089": {
+        "status": "GROUNDED",
+        "location": "Denver International Airport (DEN)",
+        "destination": "Boston Logan International (BOS)",
+        "cargo": "Autologous patient cells - Casgevy therapy",
+        "delay_reason": "Severe thunderstorm - ground stop in effect",
+        "patient_id": "PT-4521",
+        "cryo_expiry": null,
+        "eta_original": "2024-03-15T18:30:00Z",
+        "weight_kg": null,
+        "units": null
+      }
+    },
+    "inventory": {
+      "DEN-DC": {
+        "location": "Denver Distribution Center",
+        "trikafta_units": 28500,
+        "suzetrigine_units": 31000,
+        "cryo_capacity": 0,
+        "cryo_available": 0
+      },
+      "BOS-DC": {
+        "location": "Boston Distribution Center",
+        "trikafta_units": 52000,
+        "suzetrigine_units": 18000,
+        "cryo_capacity": 50,
+        "cryo_available": 14
+      }
+    },
+    "demand": {
+      "WEST": {
+        "region": "West US",
+        "suzetrigine_7day_forecast": 22000,
+        "suzetrigine_current_inventory": 31000,
+        "stockout_risk": "LOW",
+        "trending_states": []
+      },
+      "NORTHEAST": {
+        "region": "Northeast US",
+        "suzetrigine_7day_forecast": 16000,
+        "suzetrigine_current_inventory": 18000,
+        "stockout_risk": "MEDIUM",
+        "trending_states": ["Massachusetts", "New York"]
+      }
+    },
+    "cryo_expiry_minutes": 150,
+    "cryo_depots": [
+      {
+        "id": "DEN-CRYO",
+        "name": "Denver Cryo Storage",
+        "distance_miles": 18,
+        "drive_time_minutes": 25,
+        "available_slots": 18
+      },
+      {
+        "id": "CHI-CRYO",
+        "name": "Chicago Cryo Depot",
+        "distance_miles": 920,
+        "drive_time_minutes": 840,
+        "available_slots": 28
+      }
+    ]
+  }
+}
+
+---
+
+## CONSISTENCY RULES - CRITICAL
+
+1. **Flight IDs**: Any flight ID mentioned in the briefing MUST appear in scenario_data.flights
+2. **Patient IDs**: Any patient ID mentioned MUST appear in the relevant flight's patient_id field
+3. **Locations**: All locations mentioned must have corresponding entries in inventory or cryo_depots
+4. **Times**: The cryo_expiry_minutes MUST match the time pressure stated in the briefing
+5. **Status**: Flight status must match what's described (grounded = GROUNDED, delayed = DELAYED)
+6. **Numbers**: All inventory numbers, distances, and times must be realistic per the operational parameters above
+7. **Relevance**: Only include flights, depots, and regions that are relevant to THIS scenario - do not pad with unrelated data
+
+---
+
+## GENERATION INSTRUCTIONS
+
+Generate a completely new, unique scenario. Do not reuse the example above. Create fresh:
+- Flight IDs (format: VX-CGT-XXX for cell therapy, VX-SM-XXX for small molecule, VX-APL-XXX for acute pain launch)
+- Patient IDs (format: PT-XXXX)
+- Specific circumstances and complications
+- Realistic current-day timing
+
+Respond with ONLY the JSON object. No additional text, no markdown code blocks, just the raw JSON.
+`;
+
+// ============================================================
 // MOCK DATA - Simulates external systems for agentic tools
 // ============================================================
 const mockFlightData = {
@@ -378,108 +768,79 @@ app.post('/api/scenario/generate', async (req, res) => {
   try {
     const { role, difficulty } = req.body;
 
-    const prompt = `${SYSTEM_PROMPT}
+    const prompt = `${SCENARIO_CONTEXT}
 
-REFERENCE DATA (use as templates, but create scenario-specific versions):
-Sample Flight Data: ${JSON.stringify(mockFlightData, null, 2)}
-Sample Inventory Data: ${JSON.stringify(mockInventoryData, null, 2)}
-Sample Demand Signals: ${JSON.stringify(mockDemandSignals, null, 2)}
-Cryo Depot Locations: ${JSON.stringify(mockCryoDepots, null, 2)}
+NOW GENERATE A NEW SCENARIO:
+- Role: ${role}
+- Difficulty: ${difficulty.toUpperCase()}
 
-Generate a new training scenario for a ${role} at ${difficulty} difficulty level.
+Remember:
+- Generate completely fresh flight IDs, patient IDs, and circumstances
+- All data must be consistent with the briefing
+- Include only relevant data (don't pad with unrelated flights/depots)
+- Match the difficulty level for time pressure and hints
+- For Quality Engineer: Focus on CGT/Casgevy scenarios with cryo emergencies
+- For Supply Chain Planner: Focus on demand spikes, inventory issues, or launch challenges
 
-CRITICAL: You must generate SCENARIO-SPECIFIC data that directly relates to your scenario. Do not use generic data.
-
-Include:
-1. A compelling "Alert" title (what happened)
-2. Initial situation briefing (3-4 sentences)
-3. Key data points the trainee should investigate
-4. A hidden "ideal response" checklist for grading (do not reveal to user)
-5. SCENARIO-SPECIFIC DATA that will be displayed in the data panel:
-   - flights: Only flights relevant to this scenario with accurate statuses
-   - inventory: Only locations relevant to this scenario
-   - demand: Only regions relevant to this scenario
-   - cryo_expiry_minutes: If CGT scenario, how many minutes until cryo expires (use realistic 60-240 range)
-
-Format your response as JSON:
-{
-  "alert_title": "...",
-  "alert_severity": "CRITICAL|HIGH|MEDIUM",
-  "briefing": "...",
-  "initial_data": {
-    "flight_id": "..." (if applicable),
-    "location": "...",
-    "time_pressure": "...",
-    "key_metrics": {}
-  },
-  "ideal_response_checklist": ["item1", "item2", ...],
-  "hints": ["hint1", "hint2"] (more hints for beginner, fewer for expert),
-  "scenario_data": {
-    "flights": {
-      "FLIGHT-ID": {
-        "status": "GROUNDED|DELAYED|IN_TRANSIT|DIVERTED",
-        "location": "Current location",
-        "destination": "Destination",
-        "cargo": "What's being transported",
-        "delay_reason": "If delayed/grounded, why",
-        "patient_id": "If CGT, patient ID",
-        "cryo_expiry": null
-      }
-    },
-    "inventory": {
-      "LOCATION-ID": {
-        "location": "Full location name",
-        "trikafta_units": 0,
-        "suzetrigine_units": 0,
-        "cryo_capacity": 0,
-        "cryo_available": 0
-      }
-    },
-    "demand": {
-      "REGION": {
-        "region": "Region name",
-        "suzetrigine_7day_forecast": 0,
-        "suzetrigine_current_inventory": 0,
-        "stockout_risk": "HIGH|MEDIUM|LOW",
-        "trending_states": []
-      }
-    },
-    "cryo_expiry_minutes": null,
-    "cryo_depots": []
-  }
-}
-
-IMPORTANT: The scenario_data must be consistent with your briefing. If you mention a flight is grounded in Chicago, the flights data must show that exact flight grounded in Chicago. All numbers, locations, and statuses must match.`;
+Respond with ONLY the JSON object. No markdown, no explanation, just valid JSON.`;
 
     const response = await geminiModel.generateContent(prompt);
     const textContent = response.response.text();
     let scenarioData;
     
     try {
-      const jsonMatch = textContent.match(/\{[\s\S]*\}/);
+      // Clean up response - remove markdown code blocks if present
+      let cleanedResponse = textContent.trim();
+      if (cleanedResponse.startsWith('```json')) {
+        cleanedResponse = cleanedResponse.slice(7);
+      } else if (cleanedResponse.startsWith('```')) {
+        cleanedResponse = cleanedResponse.slice(3);
+      }
+      if (cleanedResponse.endsWith('```')) {
+        cleanedResponse = cleanedResponse.slice(0, -3);
+      }
+      cleanedResponse = cleanedResponse.trim();
+      
+      // Parse JSON
+      const jsonMatch = cleanedResponse.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         scenarioData = JSON.parse(jsonMatch[0]);
+        
+        // Validate required fields
+        if (!scenarioData.alert_title || !scenarioData.briefing || !scenarioData.scenario_data) {
+          throw new Error('Missing required scenario fields');
+        }
         
         // If cryo_expiry_minutes is set, calculate actual expiry time
         if (scenarioData.scenario_data?.cryo_expiry_minutes) {
           const expiryTime = new Date(Date.now() + scenarioData.scenario_data.cryo_expiry_minutes * 60 * 1000).toISOString();
-          // Add expiry to relevant flight
+          
+          // Add expiry to relevant flight(s)
           if (scenarioData.scenario_data.flights) {
             Object.keys(scenarioData.scenario_data.flights).forEach(flightId => {
               const flight = scenarioData.scenario_data.flights[flightId];
-              if (flight.patient_id || flight.cargo?.toLowerCase().includes('cell') || flight.cargo?.toLowerCase().includes('casgevy')) {
+              if (flight.patient_id || 
+                  flight.cargo?.toLowerCase().includes('cell') || 
+                  flight.cargo?.toLowerCase().includes('casgevy') ||
+                  flight.cargo?.toLowerCase().includes('autologous')) {
                 flight.cryo_expiry = expiryTime;
               }
             });
           }
           scenarioData.scenario_data.cryo_expiry_time = expiryTime;
         }
+        
       } else {
-        throw new Error('No JSON found');
+        throw new Error('No valid JSON found in response');
       }
     } catch (e) {
       console.error('Failed to parse scenario:', e);
-      scenarioData = { raw_response: textContent };
+      console.error('Raw response:', textContent);
+      return res.status(500).json({ 
+        success: false, 
+        error: 'Failed to generate valid scenario. Please try again.',
+        debug: process.env.NODE_ENV === 'development' ? textContent : undefined
+      });
     }
 
     res.json({ success: true, scenario: scenarioData });
