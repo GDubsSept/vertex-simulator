@@ -241,7 +241,11 @@ const DataPanel = ({ role, scenario, dataOverrides, cryoStatus }) => {
 
         {activeTab === 'map' && (
           <div className="h-64">
-            <FlightMap flightData={flightData} />
+            <FlightMap 
+              flightData={flightData} 
+              inventoryData={inventoryData}
+              cryoDepots={scenario?.scenario_data?.cryo_depots}
+            />
           </div>
         )}
 
